@@ -359,6 +359,57 @@ def update_job_status(
     return client.update_job_row(job_record)
 
 
+def prepare_n8n_upload_payload(
+    client: FactoryGoogleClient,
+    job_id: str,
+    file_path: Path,
+    *,
+    asset_id: Optional[str] = None,
+    notes: str = "",
+    file_name: Optional[str] = None,
+    folder_name: Optional[str] = None,
+    out_path: Optional[Path] = None,
+) -> Dict[str, Any]:
+    file_path = file_path.resolve()
+    if not file_path.exists():
+        raise FileNotFoundError(file_path)
+
+    drive_data = client.bootstrap_job_drive(job_id, folder_name=folder_name)
+    preview_folder = drive_data["subfolders"]["previews"]
+    job_json = Path(job_dir(job_id) / "metadata" / "job.json")
+    job_record = load_json(job_json, {"job_id": job_id})
+    job_record.update(
+        {
+            "job_id": job_id,
+            "status": "preview_running",
+            "drive_job_folder": drive_data["job_folder"]["webViewLink"],
+            "preview_folder": preview_folder.get("webViewLink", ""),
+            "last_updated": now_iso(),
+        }
+    )
+    save_json(job_json, job_record)
+    client.update_job_row(job_record)
+
+    payload = {
+        "job_id": job_id,
+        "asset_id": asset_id or f"{job_id}:{file_path.stem}",
+        "stage": "preview",
+        "asset_type": "image",
+        "persona_folder": drive_data["job_folder"]["name"],
+        "drive_folder_id": preview_folder["id"],
+        "drive_folder_link": preview_folder.get("webViewLink", ""),
+        "local_file_path": str(file_path),
+        "file_name": file_name or file_path.name,
+        "notes": notes,
+        "created_at": now_iso(),
+    }
+
+    if out_path is None:
+        out_path = job_dir(job_id) / "metadata" / f"upload-payload-{payload['asset_id'].replace('/', '_').replace(':', '-')}.json"
+    save_json(out_path, payload)
+    return {"payload": payload, "payload_path": str(out_path)}
+
+
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(description="Factory Drive/Sheets helper")
     sub = p.add_subparsers(dest="cmd", required=True)
@@ -387,6 +438,17 @@ def build_parser() -> argparse.ArgumentParser:
     j.add_argument("--sheet-id", default=DEFAULT_SHEET_ID)
     j.add_argument("--drive-root-id", default=DEFAULT_DRIVE_ROOT_ID)
 
+    n = sub.add_parser("prepare-n8n-upload")
+    n.add_argument("job_id")
+    n.add_argument("file_path")
+    n.add_argument("--asset-id")
+    n.add_argument("--notes", default="")
+    n.add_argument("--file-name")
+    n.add_argument("--folder-name")
+    n.add_argument("--out-path")
+    n.add_argument("--sheet-id", default=DEFAULT_SHEET_ID)
+    n.add_argument("--drive-root-id", default=DEFAULT_DRIVE_ROOT_ID)
+
     return p
 
 
@@ -410,6 +472,17 @@ def main() -> int:
     elif args.cmd == "update-job-status":
         extra = json.loads(args.extra_json) if args.extra_json else None
         result = update_job_status(client, args.job_id, status=args.status, notes=args.notes, extra=extra)
+    elif args.cmd == "prepare-n8n-upload":
+        result = prepare_n8n_upload_payload(
+            client,
+            args.job_id,
+            Path(args.file_path),
+            asset_id=args.asset_id,
+            notes=args.notes,
+            file_name=args.file_name,
+            folder_name=args.folder_name,
+            out_path=Path(args.out_path) if args.out_path else None,
+        )
     else:  # pragma: no cover
         raise ValueError(args.cmd)
 
