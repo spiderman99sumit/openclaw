@@ -1,7 +1,7 @@
 {
   "meta": {
     "lastTouchedVersion": "2026.3.8",
-    "lastTouchedAt": "2026-03-12T14:40:11.000Z"
+    "lastTouchedAt": "2026-03-12T21:11:00.196Z"
   },
   "wizard": {
     "lastRunAt": "2026-03-12T14:40:11.000Z",
@@ -343,10 +343,18 @@
     "port": 18789,
     "mode": "local",
     "bind": "loopback",
+    "controlUi": {
+      "allowedOrigins": [
+        "http://localhost:18789"
+      ]
+    },
     "auth": {
       "mode": "token",
       "token": "REDACTED"
     },
+    "trustedProxies": [
+      "127.0.0.1"
+    ],
     "tailscale": {
       "mode": "off",
       "resetOnExit": false
