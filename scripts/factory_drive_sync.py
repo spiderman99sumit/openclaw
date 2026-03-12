@@ -287,11 +287,12 @@ def upload_preview_to_drive(
     asset_id: Optional[str] = None,
     notes: str = "",
     file_name: Optional[str] = None,
+    folder_name: Optional[str] = None,
 ) -> Dict[str, Any]:
     file_path = file_path.resolve()
     if not file_path.exists():
         raise FileNotFoundError(file_path)
-    drive_data = client.bootstrap_job_drive(job_id)
+    drive_data = client.bootstrap_job_drive(job_id, folder_name=folder_name)
     preview_folder = drive_data["subfolders"]["previews"]
     uploaded = client.upload_file(file_path, preview_folder["id"], remote_name=file_name)
 
@@ -345,7 +346,7 @@ def update_job_status(
     notes: Optional[str] = None,
     extra: Optional[Dict[str, Any]] = None,
 ) -> str:
-    path = job_dir(job_id) / "09_metadata" / "job.json"
+    path = job_dir(job_id) / "metadata" / "job.json"
     job_record = load_json(path, {"job_id": job_id})
     job_record["status"] = status
     job_record["last_updated"] = now_iso()
@@ -363,6 +364,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     b = sub.add_parser("bootstrap-job")
     b.add_argument("job_id")
+    b.add_argument("--folder-name")
     b.add_argument("--sheet-id", default=DEFAULT_SHEET_ID)
     b.add_argument("--drive-root-id", default=DEFAULT_DRIVE_ROOT_ID)
 
@@ -372,6 +374,7 @@ def build_parser() -> argparse.ArgumentParser:
     u.add_argument("--asset-id")
     u.add_argument("--notes", default="")
     u.add_argument("--file-name")
+    u.add_argument("--folder-name")
     u.add_argument("--sheet-id", default=DEFAULT_SHEET_ID)
     u.add_argument("--drive-root-id", default=DEFAULT_DRIVE_ROOT_ID)
 
@@ -392,7 +395,7 @@ def main() -> int:
     client.ensure_sheet_headers()
 
     if args.cmd == "bootstrap-job":
-        result = bootstrap_job_drive(client, args.job_id)
+        result = bootstrap_job_drive(client, args.job_id, folder_name=args.folder_name)
     elif args.cmd == "upload-preview":
         result = upload_preview_to_drive(
             client,
@@ -401,6 +404,7 @@ def main() -> int:
             asset_id=args.asset_id,
             notes=args.notes,
             file_name=args.file_name,
+            folder_name=args.folder_name,
         )
     elif args.cmd == "update-job-status":
         extra = json.loads(args.extra_json) if args.extra_json else None
