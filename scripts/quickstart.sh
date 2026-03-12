@@ -170,10 +170,18 @@ fi
 
 # 4. n8n
 info "--- 4. n8n ---"
-if command -v n8n &>/dev/null; then
+N8N_BIN="$(command -v n8n || true)"
+if [ -z "$N8N_BIN" ] && [ -x /usr/lib/node_modules/n8n/bin/n8n ]; then
+    ln -sf /usr/lib/node_modules/n8n/bin/n8n /usr/local/bin/n8n || true
+    N8N_BIN="/usr/lib/node_modules/n8n/bin/n8n"
+fi
+if [ -n "$N8N_BIN" ]; then
     ok "n8n already installed"
 else
     npm install -g n8n > /dev/null 2>&1
+    ln -sf /usr/lib/node_modules/n8n/bin/n8n /usr/local/bin/n8n || true
+    (cd /usr/lib/node_modules/n8n && npm install sqlite3 --save > /dev/null 2>&1 || true)
+    N8N_BIN="$(command -v n8n || echo /usr/lib/node_modules/n8n/bin/n8n)"
     ok "n8n installed"
 fi
 
@@ -243,9 +251,9 @@ ok "Gateway running and healthy"
 # 11. n8n
 info "--- 11. n8n ---"
 rm -f "$LOG_N8N"
-nohup n8n start > "$LOG_N8N" 2>&1 &
-sleep 5
-if pgrep -f "n8n" > /dev/null; then
+nohup "${N8N_BIN:-/usr/lib/node_modules/n8n/bin/n8n}" start > "$LOG_N8N" 2>&1 &
+sleep 8
+if pgrep -f "/usr/lib/node_modules/n8n/bin/n8n|node.*n8n|n8n start" > /dev/null; then
     ok "n8n running"
 else
     tail -50 "$LOG_N8N" || true

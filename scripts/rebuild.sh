@@ -97,6 +97,8 @@ ok "OpenClaw installed"
 # 5. n8n
 info "--- 5. n8n ---"
 npm install -g n8n > /dev/null 2>&1
+ln -sf /usr/lib/node_modules/n8n/bin/n8n /usr/local/bin/n8n || true
+(cd /usr/lib/node_modules/n8n && npm install sqlite3 --save > /dev/null 2>&1 || true)
 ok "n8n installed"
 
 # 6. Persistent runtime symlink
