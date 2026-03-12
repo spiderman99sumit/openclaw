@@ -1,0 +1,277 @@
+{
+  "name": "factory_preview_upload_v1",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "factory-preview-upload",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "Webhook_Trigger",
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        240,
+        300
+      ],
+      "webhookId": "factory-preview-upload"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "name": "job_id",
+              "value": "={{$json.body.job_id}}",
+              "type": "string"
+            },
+            {
+              "name": "asset_id",
+              "value": "={{$json.body.asset_id}}",
+              "type": "string"
+            },
+            {
+              "name": "file_name",
+              "value": "={{$json.body.file_name}}",
+              "type": "string"
+            },
+            {
+              "name": "local_file_path",
+              "value": "={{$json.body.local_file_path}}",
+              "type": "string"
+            },
+            {
+              "name": "drive_folder_id",
+              "value": "={{$json.body.drive_folder_id}}",
+              "type": "string"
+            },
+            {
+              "name": "drive_folder_link",
+              "value": "={{$json.body.drive_folder_link}}",
+              "type": "string"
+            },
+            {
+              "name": "notes",
+              "value": "={{$json.body.notes || ''}}",
+              "type": "string"
+            },
+            {
+              "name": "created_at",
+              "value": "={{$json.body.created_at}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "Normalize_Input",
+      "name": "Normalize Input",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        460,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "upload",
+        "binaryData": false,
+        "fileContent": "={{$json.local_file_path}}",
+        "name": "={{$json.file_name}}",
+        "parents": [
+          "={{$json.drive_folder_id}}"
+        ],
+        "options": {}
+      },
+      "id": "Google_Drive_Upload",
+      "name": "Google Drive Upload",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        700,
+        300
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "google_drive_factory_user",
+          "name": "google_drive_factory_user"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "name": "job_id",
+              "value": "={{$('Normalize Input').item.json.job_id}}",
+              "type": "string"
+            },
+            {
+              "name": "asset_id",
+              "value": "={{$('Normalize Input').item.json.asset_id}}",
+              "type": "string"
+            },
+            {
+              "name": "stage",
+              "value": "preview",
+              "type": "string"
+            },
+            {
+              "name": "asset_type",
+              "value": "image",
+              "type": "string"
+            },
+            {
+              "name": "file_name",
+              "value": "={{$json.name}}",
+              "type": "string"
+            },
+            {
+              "name": "file_path",
+              "value": "={{$('Normalize Input').item.json.local_file_path}}",
+              "type": "string"
+            },
+            {
+              "name": "drive_link",
+              "value": "={{$json.webViewLink || $json.webContentLink || ''}}",
+              "type": "string"
+            },
+            {
+              "name": "approved",
+              "value": "false",
+              "type": "string"
+            },
+            {
+              "name": "selected_for_delivery",
+              "value": "false",
+              "type": "string"
+            },
+            {
+              "name": "created_at",
+              "value": "={{$('Normalize Input').item.json.created_at}}",
+              "type": "string"
+            },
+            {
+              "name": "notes",
+              "value": "={{$('Normalize Input').item.json.notes}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "Build_Asset_Row",
+      "name": "Build Asset Row",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        940,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": "1Mb_XYkrwjwNPACMN-nMRbUpmXZ_uKaQ8SoyQFueyGbM",
+        "sheetName": "Assets",
+        "columns": {
+          "mappingMode": "autoMapInputData"
+        },
+        "options": {}
+      },
+      "id": "Append_Assets_Row",
+      "name": "Append Assets Row",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1180,
+        300
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "google_sheets_factory_user",
+          "name": "google_sheets_factory_user"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{{\n  \"ok\": true,\n  \"job_id\": $('Build Asset Row').item.json.job_id,\n  \"asset_id\": $('Build Asset Row').item.json.asset_id,\n  \"file_name\": $('Build Asset Row').item.json.file_name,\n  \"drive_link\": $('Build Asset Row').item.json.drive_link\n}}}",
+        "options": {}
+      },
+      "id": "Respond_Success",
+      "name": "Respond Success",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        1420,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "Normalize Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Input": {
+      "main": [
+        [
+          {
+            "node": "Google Drive Upload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive Upload": {
+      "main": [
+        [
+          {
+            "node": "Build Asset Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Asset Row": {
+      "main": [
+        [
+          {
+            "node": "Append Assets Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append Assets Row": {
+      "main": [
+        [
+          {
+            "node": "Respond Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {},
+  "versionId": "factory-preview-upload-v1"
+}
