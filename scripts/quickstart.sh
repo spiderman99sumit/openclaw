@@ -6,6 +6,7 @@ PERSIST_DIR="/kaggle/working/.openclaw"
 CRED_DIR="$PERSIST_DIR/credentials"
 RUNTIME_BACKUP_DIR="$PERSIST_DIR/runtime-backups"
 ROOT_BACKUP_DIR="$PERSIST_DIR/root-openclaw-backup"
+PERSIST_RUNTIME_DIR="$PERSIST_DIR/root-openclaw-live"
 WORKSPACE_DIR="/kaggle/working/.openclaw/workspace"
 LOG_GATEWAY="/kaggle/working/openclaw_gateway.log"
 LOG_N8N="/kaggle/working/n8n.log"
@@ -86,6 +87,35 @@ restore_runtime_state() {
     done
 }
 
+setup_persistent_root_symlink() {
+    mkdir -p "$PERSIST_RUNTIME_DIR"
+
+    if [ -L /root/.openclaw ]; then
+        current_target="$(readlink -f /root/.openclaw || true)"
+        desired_target="$(readlink -f "$PERSIST_RUNTIME_DIR" || true)"
+        if [ "$current_target" = "$desired_target" ]; then
+            ok "/root/.openclaw already symlinked to persistent storage"
+            return 0
+        fi
+        rm -f /root/.openclaw
+    fi
+
+    if [ -d /root/.openclaw ] && [ ! -L /root/.openclaw ]; then
+        if [ -z "$(find "$PERSIST_RUNTIME_DIR" -mindepth 1 -maxdepth 1 2>/dev/null | head -1)" ]; then
+            info "Migrating existing /root/.openclaw into persistent storage"
+            rsync -a /root/.openclaw/ "$PERSIST_RUNTIME_DIR/"
+        else
+            info "Persistent runtime already exists; merging missing files from /root/.openclaw"
+            rsync -a --ignore-existing /root/.openclaw/ "$PERSIST_RUNTIME_DIR/"
+        fi
+        rm -rf /root/.openclaw
+    fi
+
+    mkdir -p /root
+    ln -s "$PERSIST_RUNTIME_DIR" /root/.openclaw
+    ok "Symlinked /root/.openclaw -> $PERSIST_RUNTIME_DIR"
+}
+
 trap 'warn "Quickstart failed near line $LINENO. Check logs: $LOG_GATEWAY $LOG_N8N $LOG_VSCODE"' ERR
 
 info "============================================="
@@ -94,7 +124,7 @@ info "============================================="
 
 # 1. Load secrets
 info "--- 1. Loading Kaggle Secrets ---"
-mkdir -p "$CRED_DIR" "$RUNTIME_BACKUP_DIR" "$ROOT_BACKUP_DIR"
+mkdir -p "$CRED_DIR" "$RUNTIME_BACKUP_DIR" "$ROOT_BACKUP_DIR" "$PERSIST_RUNTIME_DIR"
 python3 - <<'PY'
 from kaggle_secrets import UserSecretsClient
 s = UserSecretsClient()
@@ -147,8 +177,12 @@ else
     ok "n8n installed"
 fi
 
-# 5. Restore config
-info "--- 5. OpenClaw Config ---"
+# 5. Persistent runtime symlink
+info "--- 5. Persistent /root/.openclaw Symlink ---"
+setup_persistent_root_symlink
+
+# 6. Restore config
+info "--- 6. OpenClaw Config ---"
 mkdir -p /root/.openclaw
 if [ -f "$PERSIST_DIR/openclaw.json.bak" ]; then
     cp "$PERSIST_DIR/openclaw.json.bak" /root/.openclaw/openclaw.json
@@ -157,8 +191,8 @@ else
     fail "No config backup at $PERSIST_DIR/openclaw.json.bak — run rebuild.sh first"
 fi
 
-# 6. Agent directories + runtime backups
-info "--- 6. Agent Directories & Runtime State ---"
+# 7. Agent directories + runtime backups
+info "--- 7. Agent Directories & Runtime State ---"
 for agent in "${AGENTS[@]}"; do
     mkdir -p "/root/.openclaw/agents/${agent}/agent"
     mkdir -p "/root/.openclaw/agents/${agent}/sessions"
@@ -167,8 +201,8 @@ restore_runtime_state
 ok "Agent directories restored"
 ok "Runtime auth/device state restored when available"
 
-# 7. Git
-info "--- 7. Git ---"
+# 8. Git
+info "--- 8. Git ---"
 git config --global user.email "$GIT_AUTHOR_EMAIL"
 git config --global user.name "$GIT_AUTHOR_NAME"
 cd "$WORKSPACE_DIR"
@@ -181,8 +215,8 @@ else
 fi
 ok "Git configured"
 
-# 8. Kill old processes
-info "--- 8. Cleanup ---"
+# 9. Kill old processes
+info "--- 9. Cleanup ---"
 pkill -f "openclaw gateway" 2>/dev/null || true
 pkill -f "n8n" 2>/dev/null || true
 pkill -f "code tunnel" 2>/dev/null || true
@@ -190,8 +224,8 @@ pkill -f "scripts/autopush.sh" 2>/dev/null || true
 sleep 2
 ok "Old processes cleaned"
 
-# 9. Gateway
-info "--- 9. Gateway ---"
+# 10. Gateway
+info "--- 10. Gateway ---"
 rm -f "$LOG_GATEWAY"
 nohup openclaw gateway --port 18789 > "$LOG_GATEWAY" 2>&1 &
 sleep 8
@@ -206,8 +240,8 @@ if ! openclaw health > /tmp/openclaw_health.out 2>&1; then
 fi
 ok "Gateway running and healthy"
 
-# 10. n8n
-info "--- 10. n8n ---"
+# 11. n8n
+info "--- 11. n8n ---"
 rm -f "$LOG_N8N"
 nohup n8n start > "$LOG_N8N" 2>&1 &
 sleep 5
@@ -218,8 +252,8 @@ else
     fail "n8n failed to start"
 fi
 
-# 11. VS Code
-info "--- 11. VS Code Tunnel ---"
+# 12. VS Code
+info "--- 12. VS Code Tunnel ---"
 if [ -f "/kaggle/working/.vscode/code" ]; then
     rm -f "$LOG_VSCODE"
     nohup /kaggle/working/.vscode/code tunnel --accept-server-license-terms --name openclaw-kaggle > "$LOG_VSCODE" 2>&1 &
@@ -229,8 +263,8 @@ else
     warn "VS Code CLI missing"
 fi
 
-# 12. Autopush
-info "--- 12. Autopush ---"
+# 13. Autopush
+info "--- 13. Autopush ---"
 nohup bash -c '
 while true; do
   bash /kaggle/working/.openclaw/workspace/scripts/autopush.sh >> /kaggle/working/autopush.log 2>&1
@@ -239,14 +273,14 @@ done
 ' > /dev/null 2>&1 &
 ok "Autopush every 60s"
 
-# 13. Persist runtime state for next Kaggle restart
-info "--- 13. Persist Runtime State ---"
+# 14. Persist runtime state for next Kaggle restart
+info "--- 14. Persist Runtime State ---"
 backup_runtime_state
 snapshot_root_openclaw
 ok "Config/auth/device state backed up to persistent storage"
 ok "Compact /root/.openclaw snapshot saved to $ROOT_BACKUP_DIR"
 
-# 14. Verify
+# 15. Verify
 info ""
 info "============================================="
 info "  VERIFICATION"
@@ -258,4 +292,5 @@ info ""
 info "============================================="
 info "  ✅ CORE SERVICES STARTED"
 info "============================================="
+info "Persistent runtime dir: $PERSIST_RUNTIME_DIR"
 info "If Discord is briefly disconnected, wait ~10-20s and recheck: openclaw channels status"

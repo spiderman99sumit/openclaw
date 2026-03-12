@@ -19,3 +19,4 @@ __pycache__/
 state/openclaw.json.local-backup
 ../root-openclaw-backup/
 ../runtime-backups/
+../root-openclaw-live/
