@@ -20,9 +20,9 @@ for ws in /kaggle/working/.openclaw/workspace-*/; do
   fi
 done
 
-# 3. Export sanitized config
+# 3. Export sanitized config + lightweight root snapshot manifest
 python3 -c "
-import json, copy
+import json, copy, os
 try:
     with open('/root/.openclaw/openclaw.json') as f:
         c = json.load(f)
@@ -35,13 +35,30 @@ try:
         s['gateway']['auth']['token'] = 'REDACTED'
     if 'search' in s.get('tools',{}).get('web',{}):
         s['tools']['web']['search']['apiKey'] = 'REDACTED'
-    import os; os.makedirs('$REPO_DIR/config', exist_ok=True)
+    os.makedirs('$REPO_DIR/config', exist_ok=True)
     with open('$REPO_DIR/config/openclaw-sanitized.json','w') as f:
         json.dump(s, f, indent=2)
-except: pass
+except Exception:
+    pass
+
+try:
+    base = '/kaggle/working/.openclaw/root-openclaw-backup'
+    manifest = []
+    if os.path.isdir(base):
+        for root, dirs, files in os.walk(base):
+            dirs[:] = [d for d in dirs if d not in {'memory','logs','canvas','telegram'}]
+            for name in files:
+                p = os.path.join(root, name)
+                rel = os.path.relpath(p, base)
+                manifest.append({'path': rel, 'size': os.path.getsize(p)})
+    os.makedirs('$REPO_DIR/state', exist_ok=True)
+    with open('$REPO_DIR/state/root-openclaw-backup-manifest.json', 'w') as f:
+        json.dump(sorted(manifest, key=lambda x: x['path']), f, indent=2)
+except Exception:
+    pass
 " 2>/dev/null || true
 
-# 4. Git push
+# 4. Git push (safe files only)
 cd "$REPO_DIR"
 source /kaggle/working/.openclaw/credentials/openclaw-secrets.env 2>/dev/null || true
 git config user.email "${GIT_AUTHOR_EMAIL:-bot@openclaw.ai}"
@@ -49,7 +66,7 @@ git config user.name "${GIT_AUTHOR_NAME:-Kaggle Bot}"
 git remote set-url origin "https://${GITHUB_TOKEN}@github.com/spiderman99sumit/openclaw.git"
 git pull --rebase || true
 git add -A
-git reset -q -- '*.env' 'credentials/' 'sa-gdrive.json' 2>/dev/null || true
+git reset -q -- '*.env' 'credentials/' 'sa-gdrive.json' 'state/openclaw.json.local-backup' '.openclaw/' '../credentials/' '../root-openclaw-backup/' 2>/dev/null || true
 if ! git diff --cached --quiet; then
   git commit -m "autosave: $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
   git push

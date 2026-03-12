@@ -14,3 +14,8 @@
 *.log
 __pycache__/
 .DS_Store
+
+# Local runtime backups (persist on Kaggle, never push)
+state/openclaw.json.local-backup
+../root-openclaw-backup/
+../runtime-backups/
