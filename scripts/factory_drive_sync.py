@@ -45,16 +45,16 @@ DEFAULT_SHEET_ID = "1Mb_XYkrwjwNPACMN-nMRbUpmXZ_uKaQ8SoyQFueyGbM"
 DEFAULT_DRIVE_ROOT_ID = "1v4Kc4c5dYeTQF2MVpIoac3hzt0WFJrnI"
 
 JOB_SUBFOLDERS = [
-    "00_intake",
-    "01_references",
-    "02_dataset",
-    "03_previews",
-    "04_approvals",
-    "05_lora",
-    "06_final_batches",
-    "07_delivery",
-    "08_logs",
-    "09_metadata",
+    "intake",
+    "references",
+    "dataset",
+    "previews",
+    "approvals",
+    "lora",
+    "final_batches",
+    "delivery",
+    "logs",
+    "metadata",
 ]
 
 JOBS_HEADERS = [
@@ -145,8 +145,8 @@ class FactoryGoogleClient:
         }
         return self.drive.files().create(body=body, fields="id,name,webViewLink").execute()
 
-    def bootstrap_job_drive(self, job_id: str) -> Dict[str, Any]:
-        job_folder = self.ensure_folder(job_id, self.drive_root_id)
+    def bootstrap_job_drive(self, job_id: str, folder_name: Optional[str] = None) -> Dict[str, Any]:
+        job_folder = self.ensure_folder(folder_name or job_id, self.drive_root_id)
         subfolders: Dict[str, Dict[str, str]] = {}
         for sub in JOB_SUBFOLDERS:
             subfolders[sub] = self.ensure_folder(sub, job_folder["id"])
@@ -237,7 +237,7 @@ def bootstrap_local_job(job_id: str) -> Dict[str, Any]:
     base.mkdir(parents=True, exist_ok=True)
     for sub in JOB_SUBFOLDERS:
         (base / sub).mkdir(parents=True, exist_ok=True)
-    metadata_dir = base / "09_metadata"
+    metadata_dir = base / "metadata"
     assets_path = metadata_dir / "assets.json"
     if not assets_path.exists():
         save_json(assets_path, [])
@@ -255,12 +255,12 @@ def bootstrap_local_job(job_id: str) -> Dict[str, Any]:
     return {"job_dir": str(base), "assets_path": str(assets_path), "job_json_path": str(job_json_path)}
 
 
-def bootstrap_job_drive(client: FactoryGoogleClient, job_id: str) -> Dict[str, Any]:
+def bootstrap_job_drive(client: FactoryGoogleClient, job_id: str, folder_name: Optional[str] = None) -> Dict[str, Any]:
     local = bootstrap_local_job(job_id)
-    drive_data = client.bootstrap_job_drive(job_id)
-    preview_folder = drive_data["subfolders"]["03_previews"]
-    final_folder = drive_data["subfolders"]["06_final_batches"]
-    delivery_folder = drive_data["subfolders"]["07_delivery"]
+    drive_data = client.bootstrap_job_drive(job_id, folder_name=folder_name)
+    preview_folder = drive_data["subfolders"]["previews"]
+    final_folder = drive_data["subfolders"]["final_batches"]
+    delivery_folder = drive_data["subfolders"]["delivery"]
     job_record = load_json(Path(local["job_json_path"]), {})
     job_record.update(
         {
@@ -292,7 +292,7 @@ def upload_preview_to_drive(
     if not file_path.exists():
         raise FileNotFoundError(file_path)
     drive_data = client.bootstrap_job_drive(job_id)
-    preview_folder = drive_data["subfolders"]["03_previews"]
+    preview_folder = drive_data["subfolders"]["previews"]
     uploaded = client.upload_file(file_path, preview_folder["id"], remote_name=file_name)
 
     asset_id = asset_id or f"{job_id}:{file_path.stem}"
@@ -311,12 +311,12 @@ def upload_preview_to_drive(
     }
     sheet_result = client.record_asset_row(asset)
 
-    local_assets = Path(job_dir(job_id) / "09_metadata" / "assets.json")
+    local_assets = Path(job_dir(job_id) / "metadata" / "assets.json")
     assets = load_json(local_assets, [])
     assets = [a for a in assets if a.get("asset_id") != asset_id] + [asset]
     save_json(local_assets, assets)
 
-    job_json = Path(job_dir(job_id) / "09_metadata" / "job.json")
+    job_json = Path(job_dir(job_id) / "metadata" / "job.json")
     job_record = load_json(job_json, {"job_id": job_id})
     job_record.update(
         {
