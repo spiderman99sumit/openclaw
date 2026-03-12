@@ -1,0 +1,16 @@
+# Never commit secrets
+../credentials/openclaw-secrets.env
+*.env
+*.env.local
+
+# Large artifacts
+*.tar.gz
+*.zip
+*.ckpt
+*.safetensors
+*.pt
+
+# Logs
+*.log
+__pycache__/
+.DS_Store

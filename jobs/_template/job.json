@@ -1,0 +1,20 @@
+{
+  "job_id": "",
+  "client_name": "",
+  "platform": "",
+  "package": "",
+  "niche": "",
+  "persona_name": "",
+  "status": "new",
+  "priority": "",
+  "deadline": "",
+  "drive_job_folder": "",
+  "local_job_folder": "",
+  "reference_count": 0,
+  "dataset_ready": false,
+  "preview_folder": "",
+  "final_folder": "",
+  "qa_status": "",
+  "notes": "",
+  "last_updated": ""
+}
