@@ -18,7 +18,7 @@ echo "OK: $(node --version)"
 echo ""
 echo "=== Step 2: openclaw ==="
 if ! which openclaw > /dev/null 2>&1; then
-  npm install -g openclaw@2026.3.8 --save-exact > /dev/null 2>&1
+  npm install -g openclaw@2026.3.11 --save-exact > /dev/null 2>&1
 fi
 echo "OK: $(openclaw --version)"
 
