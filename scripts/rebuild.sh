@@ -1,21 +1,65 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -Eeuo pipefail
 
-echo "============================================="
-echo "  FULL REBUILD — From Scratch"
-echo "============================================="
+AGENTS=(main manager maya jordan sam creative-lab prompt-engineer ops-guardian watchdog validator recovery n8n-worker)
+PERSIST_DIR="/kaggle/working/.openclaw"
+CRED_DIR="$PERSIST_DIR/credentials"
+WORKSPACE_DIR="$PERSIST_DIR/workspace"
+PERSIST_RUNTIME_DIR="$PERSIST_DIR/root-openclaw-live"
+RUNTIME_BACKUP_DIR="$PERSIST_DIR/runtime-backups"
+ROOT_BACKUP_DIR="$PERSIST_DIR/root-openclaw-backup"
+
+warn() { echo "⚠️ $*"; }
+info() { echo "$*"; }
+ok() { echo "✅ $*"; }
+fail() { echo "❌ $*"; exit 1; }
+
+setup_persistent_root_symlink() {
+    mkdir -p "$PERSIST_RUNTIME_DIR"
+
+    if [ -L /root/.openclaw ]; then
+        current_target="$(readlink -f /root/.openclaw || true)"
+        desired_target="$(readlink -f "$PERSIST_RUNTIME_DIR" || true)"
+        if [ "$current_target" = "$desired_target" ]; then
+            ok "/root/.openclaw already symlinked to persistent storage"
+            return 0
+        fi
+        rm -f /root/.openclaw
+    fi
+
+    if [ -d /root/.openclaw ] && [ ! -L /root/.openclaw ]; then
+        if [ -z "$(find "$PERSIST_RUNTIME_DIR" -mindepth 1 -maxdepth 1 2>/dev/null | head -1)" ]; then
+            info "Migrating existing /root/.openclaw into persistent storage"
+            rsync -a /root/.openclaw/ "$PERSIST_RUNTIME_DIR/"
+        else
+            info "Persistent runtime already exists; merging missing files from /root/.openclaw"
+            rsync -a --ignore-existing /root/.openclaw/ "$PERSIST_RUNTIME_DIR/"
+        fi
+        rm -rf /root/.openclaw
+    fi
+
+    mkdir -p /root
+    ln -s "$PERSIST_RUNTIME_DIR" /root/.openclaw
+    ok "Symlinked /root/.openclaw -> $PERSIST_RUNTIME_DIR"
+}
+
+info "============================================="
+info "  FULL REBUILD — From Scratch"
+info "============================================="
 
 # 1. Directories
-echo "--- 1. Directories ---"
-mkdir -p /kaggle/working/.openclaw/credentials
-mkdir -p /kaggle/working/.openclaw/workspace
+info "--- 1. Directories ---"
+mkdir -p "$CRED_DIR"
+mkdir -p "$WORKSPACE_DIR"
 mkdir -p /kaggle/working/.vscode
-mkdir -p /root/.openclaw
-echo "✅ Directories created"
+mkdir -p "$PERSIST_RUNTIME_DIR"
+mkdir -p "$RUNTIME_BACKUP_DIR"
+mkdir -p "$ROOT_BACKUP_DIR"
+ok "Directories created"
 
 # 2. Secrets
-echo "--- 2. Kaggle Secrets ---"
-python3 -c "
+info "--- 2. Kaggle Secrets ---"
+python3 - <<'PY'
 from kaggle_secrets import UserSecretsClient
 s = UserSecretsClient()
 keys = [
@@ -26,56 +70,66 @@ keys = [
     'GATEWAY_AUTH_TOKEN'
 ]
 found = 0
-with open('/kaggle/working/.openclaw/credentials/openclaw-secrets.env','w') as f:
+path = '/kaggle/working/.openclaw/credentials/openclaw-secrets.env'
+with open(path, 'w') as f:
     for k in keys:
         try:
             v = s.get_secret(k)
             f.write(f'{k}={v}\n')
             found += 1
-        except:
+        except Exception:
             f.write(f'# {k}=NOT_FOUND\n')
-print(f'✅ Secrets: {found}/13 loaded')
-"
-source /kaggle/working/.openclaw/credentials/openclaw-secrets.env
+print(f'✅ Secrets: {found}/{len(keys)} loaded')
+PY
+source "$CRED_DIR/openclaw-secrets.env"
 
 # 3. Node 22
-echo "--- 3. Node 22 ---"
+info "--- 3. Node 22 ---"
 curl -fsSL https://deb.nodesource.com/setup_22.x | bash - > /dev/null 2>&1
 apt-get install -y nodejs > /dev/null 2>&1
-echo "✅ Node $(node -v)"
+ok "Node $(node -v)"
 
 # 4. OpenClaw
-echo "--- 4. OpenClaw ---"
-npm install -g openclaw@2026.3.8 > /dev/null 2>&1
-echo "✅ OpenClaw installed"
+info "--- 4. OpenClaw ---"
+npm install -g openclaw@2026.3.11 > /dev/null 2>&1
+ok "OpenClaw installed"
 
 # 5. n8n
-echo "--- 5. n8n ---"
+info "--- 5. n8n ---"
 npm install -g n8n > /dev/null 2>&1
-echo "✅ n8n installed"
+ok "n8n installed"
 
-# 6. GitHub clone
-echo "--- 6. GitHub ---"
+# 6. Persistent runtime symlink
+info "--- 6. Persistent /root/.openclaw Symlink ---"
+setup_persistent_root_symlink
+
+# 7. GitHub clone/update
+info "--- 7. GitHub ---"
 git config --global user.email "$GIT_AUTHOR_EMAIL"
 git config --global user.name "$GIT_AUTHOR_NAME"
-cd /kaggle/working/.openclaw
+cd "$PERSIST_DIR"
 if [ -d "workspace/.git" ]; then
-    cd workspace && git pull --rebase || true
-    echo "✅ Workspace updated"
+    cd workspace
+    if ! git diff --quiet || ! git diff --cached --quiet; then
+        warn "Workspace has local changes — skipping git pull to avoid rebase failure"
+    else
+        git pull --rebase || true
+        ok "Workspace updated"
+    fi
 else
     rm -rf workspace
     git clone "https://${GITHUB_TOKEN}@github.com/spiderman99sumit/openclaw.git" workspace
-    echo "✅ Workspace cloned"
+    ok "Workspace cloned"
 fi
 
-# 7. Agent workspaces
-echo "--- 7. Agent Workspaces ---"
+# 8. Agent workspaces
+info "--- 8. Agent Workspaces ---"
 for agent in manager maya jordan sam creative-lab prompt-engineer ops-guardian watchdog validator recovery n8n-worker; do
     mkdir -p "/kaggle/working/.openclaw/workspace-${agent}"
     mkdir -p "/root/.openclaw/agents/${agent}/agent"
     mkdir -p "/root/.openclaw/agents/${agent}/sessions"
-    if [ -f "/kaggle/working/.openclaw/workspace/agents/${agent}/IDENTITY.md" ]; then
-        cp "/kaggle/working/.openclaw/workspace/agents/${agent}/IDENTITY.md" \
+    if [ -f "$WORKSPACE_DIR/agents/${agent}/IDENTITY.md" ]; then
+        cp "$WORKSPACE_DIR/agents/${agent}/IDENTITY.md" \
            "/kaggle/working/.openclaw/workspace-${agent}/IDENTITY.md"
         echo "  ✅ $agent"
     else
@@ -83,38 +137,38 @@ for agent in manager maya jordan sam creative-lab prompt-engineer ops-guardian w
     fi
 done
 mkdir -p /root/.openclaw/agents/main/agent /root/.openclaw/agents/main/sessions
-echo "✅ All agent workspaces created"
+ok "All agent workspaces created"
 
-# 8. VS Code CLI
-echo "--- 8. VS Code CLI ---"
+# 9. VS Code CLI
+info "--- 9. VS Code CLI ---"
 cd /kaggle/working/.vscode
 if [ ! -f "./code" ]; then
     curl -fsSL "https://code.visualstudio.com/sha/download?build=stable&os=cli-alpine-x64" -o vscode_cli.tar.gz
     tar -xzf vscode_cli.tar.gz
     rm vscode_cli.tar.gz
-    echo "✅ VS Code CLI downloaded"
+    ok "VS Code CLI downloaded"
 else
-    echo "✅ VS Code CLI exists"
+    ok "VS Code CLI exists"
 fi
 
-# 9. Service account
-echo "--- 9. Service Account ---"
-python3 -c "
+# 10. Service account
+info "--- 10. Service Account ---"
+python3 - <<'PY'
 from kaggle_secrets import UserSecretsClient
 try:
     sa = UserSecretsClient().get_secret('SA_GDRIVE_JSON')
     with open('/kaggle/working/.openclaw/credentials/sa-gdrive.json','w') as f:
         f.write(sa)
     print('✅ sa-gdrive.json restored')
-except:
+except Exception:
     print('⚠️ SA_GDRIVE_JSON not in secrets — upload manually')
-" 2>/dev/null || echo "⚠️ Service account needs manual setup"
+PY
 
-# 10. OpenClaw config
-echo "--- 10. OpenClaw Config ---"
-if [ -f "/kaggle/working/.openclaw/openclaw.json.bak" ]; then
-    cp /kaggle/working/.openclaw/openclaw.json.bak /root/.openclaw/openclaw.json
-    echo "✅ Config restored from backup"
+# 11. OpenClaw config
+info "--- 11. OpenClaw Config ---"
+if [ -f "$PERSIST_DIR/openclaw.json.bak" ]; then
+    cp "$PERSIST_DIR/openclaw.json.bak" /root/.openclaw/openclaw.json
+    ok "Config restored from backup"
     echo ""
     echo "Now run: bash /kaggle/working/.openclaw/workspace/scripts/quickstart.sh"
 else
@@ -132,7 +186,9 @@ echo "  REBUILD COMPLETE"
 echo "============================================="
 echo "  ✅ Node $(node -v)"
 echo "  ✅ OpenClaw + n8n installed"
-echo "  ✅ Repo cloned"
+echo "  ✅ Repo ready"
+echo "  ✅ Persistent runtime symlink ready"
 echo "  ✅ 12 agent workspaces ready"
 echo "  ✅ VS Code CLI ready"
+echo "  Persistent runtime dir: $PERSIST_RUNTIME_DIR"
 echo "============================================="
