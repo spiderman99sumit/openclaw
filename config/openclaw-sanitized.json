@@ -1,7 +1,7 @@
 {
   "meta": {
     "lastTouchedVersion": "2026.3.8",
-    "lastTouchedAt": "2026-03-12T14:40:11.000Z"
+    "lastTouchedAt": "2026-03-12T20:02:11.278Z"
   },
   "wizard": {
     "lastRunAt": "2026-03-12T14:40:11.000Z",
@@ -343,6 +343,11 @@
     "port": 18789,
     "mode": "local",
     "bind": "loopback",
+    "controlUi": {
+      "allowedOrigins": [
+        "https://0vx6wsg3-18789.use.devtunnels.ms"
+      ]
+    },
     "auth": {
       "mode": "token",
       "token": "REDACTED"
