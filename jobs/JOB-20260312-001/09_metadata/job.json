@@ -2,9 +2,10 @@
   "job_id": "JOB-20260312-001",
   "status": "preview_running",
   "local_job_folder": "/kaggle/working/.openclaw/workspace/jobs/JOB-20260312-001",
-  "last_updated": "2026-03-12T22:43:31Z",
+  "last_updated": "2026-03-12T22:44:11Z",
   "drive_job_folder": "https://drive.google.com/drive/folders/1cQ1oKQtk1yJMNNNq3X_iYHMgxi6_utEn",
   "preview_folder": "https://drive.google.com/drive/folders/18A9EHwdjXA5tWHLKv-LJft5sk4vW-HY1",
   "final_folder": "https://drive.google.com/drive/folders/1XNDHITQasDMOzm5NK7Bk_LhXijVoyFlR",
-  "delivery_folder": "https://drive.google.com/drive/folders/1qcAu4ciTUZD8apQq3qQ9rbxQwcMAjMW_"
+  "delivery_folder": "https://drive.google.com/drive/folders/1qcAu4ciTUZD8apQq3qQ9rbxQwcMAjMW_",
+  "notes": "Phase 1 helper test: Drive bootstrap succeeded; preview upload blocked by Drive service-account quota restriction"
 }
