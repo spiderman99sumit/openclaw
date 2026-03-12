@@ -1,0 +1,355 @@
+{
+  "meta": {
+    "lastTouchedVersion": "2026.3.8",
+    "lastTouchedAt": "2026-03-12T14:40:11.000Z"
+  },
+  "wizard": {
+    "lastRunAt": "2026-03-12T14:40:11.000Z",
+    "lastRunVersion": "2026.3.8",
+    "lastRunCommand": "onboard",
+    "lastRunMode": "local"
+  },
+  "auth": {
+    "profiles": {
+      "openai-codex:default": {
+        "provider": "openai-codex",
+        "mode": "oauth"
+      }
+    }
+  },
+  "agents": {
+    "defaults": {
+      "model": {
+        "primary": "openai-codex/gpt-5.4"
+      },
+      "workspace": "/kaggle/working/.openclaw/workspace",
+      "compaction": {
+        "mode": "safeguard"
+      },
+      "maxConcurrent": 4,
+      "subagents": {
+        "maxConcurrent": 8
+      }
+    },
+    "list": [
+      {
+        "id": "main"
+      },
+      {
+        "id": "manager",
+        "name": "Manager",
+        "workspace": "/kaggle/working/.openclaw/workspace-manager",
+        "agentDir": "/root/.openclaw/agents/manager/agent",
+        "model": "openai-codex/gpt-5.4"
+      },
+      {
+        "id": "maya",
+        "name": "Maya",
+        "workspace": "/kaggle/working/.openclaw/workspace-maya",
+        "agentDir": "/root/.openclaw/agents/maya/agent",
+        "model": "openai-codex/gpt-5.4"
+      },
+      {
+        "id": "jordan",
+        "name": "Jordan",
+        "workspace": "/kaggle/working/.openclaw/workspace-jordan",
+        "agentDir": "/root/.openclaw/agents/jordan/agent",
+        "model": "openai-codex/gpt-5.4"
+      },
+      {
+        "id": "sam",
+        "name": "Sam",
+        "workspace": "/kaggle/working/.openclaw/workspace-sam",
+        "agentDir": "/root/.openclaw/agents/sam/agent",
+        "model": "openai-codex/gpt-5.4"
+      },
+      {
+        "id": "creative-lab",
+        "name": "Creative Lab",
+        "workspace": "/kaggle/working/.openclaw/workspace-creative-lab",
+        "agentDir": "/root/.openclaw/agents/creative-lab/agent",
+        "model": "openai-codex/gpt-5.4"
+      },
+      {
+        "id": "prompt-engineer",
+        "name": "Prompt Engineer",
+        "workspace": "/kaggle/working/.openclaw/workspace-prompt-engineer",
+        "agentDir": "/root/.openclaw/agents/prompt-engineer/agent",
+        "model": "openai-codex/gpt-5.4"
+      },
+      {
+        "id": "ops-guardian",
+        "name": "Ops Guardian",
+        "workspace": "/kaggle/working/.openclaw/workspace-ops-guardian",
+        "agentDir": "/root/.openclaw/agents/ops-guardian/agent",
+        "model": "openai-codex/gpt-5.4"
+      },
+      {
+        "id": "watchdog",
+        "name": "Watchdog",
+        "workspace": "/kaggle/working/.openclaw/workspace-watchdog",
+        "agentDir": "/root/.openclaw/agents/watchdog/agent",
+        "model": "openai-codex/gpt-5.4"
+      },
+      {
+        "id": "validator",
+        "name": "Validator",
+        "workspace": "/kaggle/working/.openclaw/workspace-validator",
+        "agentDir": "/root/.openclaw/agents/validator/agent",
+        "model": "openai-codex/gpt-5.4"
+      },
+      {
+        "id": "recovery",
+        "name": "Recovery",
+        "workspace": "/kaggle/working/.openclaw/workspace-recovery",
+        "agentDir": "/root/.openclaw/agents/recovery/agent",
+        "model": "openai-codex/gpt-5.4"
+      },
+      {
+        "id": "n8n-worker",
+        "name": "N8N Worker",
+        "workspace": "/kaggle/working/.openclaw/workspace-n8n-worker",
+        "agentDir": "/root/.openclaw/agents/n8n-worker/agent",
+        "model": "openai-codex/gpt-5.4"
+      }
+    ]
+  },
+  "tools": {
+    "profile": "full",
+    "web": {
+      "search": {
+        "provider": "brave",
+        "apiKey": "REDACTED"
+      }
+    }
+  },
+  "bindings": [
+    {
+      "agentId": "main",
+      "match": {
+        "channel": "discord",
+        "peer": {
+          "kind": "channel",
+          "id": "1478772230593839275"
+        },
+        "guildId": "1475512953154568333"
+      }
+    },
+    {
+      "agentId": "maya",
+      "match": {
+        "channel": "discord",
+        "peer": {
+          "kind": "channel",
+          "id": "1478277461807595627"
+        },
+        "guildId": "1475512953154568333"
+      }
+    },
+    {
+      "agentId": "jordan",
+      "match": {
+        "channel": "discord",
+        "peer": {
+          "kind": "channel",
+          "id": "1478277630632530030"
+        },
+        "guildId": "1475512953154568333"
+      }
+    },
+    {
+      "agentId": "sam",
+      "match": {
+        "channel": "discord",
+        "peer": {
+          "kind": "channel",
+          "id": "1478277891174436960"
+        },
+        "guildId": "1475512953154568333"
+      }
+    },
+    {
+      "agentId": "creative-lab",
+      "match": {
+        "channel": "discord",
+        "peer": {
+          "kind": "channel",
+          "id": "1478275763093635244"
+        },
+        "guildId": "1475512953154568333"
+      }
+    },
+    {
+      "agentId": "prompt-engineer",
+      "match": {
+        "channel": "discord",
+        "peer": {
+          "kind": "channel",
+          "id": "1479810885907251200"
+        },
+        "guildId": "1475512953154568333"
+      }
+    },
+    {
+      "agentId": "ops-guardian",
+      "match": {
+        "channel": "discord",
+        "peer": {
+          "kind": "channel",
+          "id": "1478277286808780842"
+        },
+        "guildId": "1475512953154568333"
+      }
+    },
+    {
+      "agentId": "manager",
+      "match": {
+        "channel": "discord",
+        "peer": {
+          "kind": "channel",
+          "id": "1479395533154947143"
+        },
+        "guildId": "1475512953154568333"
+      }
+    },
+    {
+      "agentId": "watchdog",
+      "match": {
+        "channel": "discord",
+        "peer": {
+          "kind": "channel",
+          "id": "1479395535248162858"
+        },
+        "guildId": "1475512953154568333"
+      }
+    },
+    {
+      "agentId": "validator",
+      "match": {
+        "channel": "discord",
+        "peer": {
+          "kind": "channel",
+          "id": "1479395536183230524"
+        },
+        "guildId": "1475512953154568333"
+      }
+    },
+    {
+      "agentId": "recovery",
+      "match": {
+        "channel": "discord",
+        "peer": {
+          "kind": "channel",
+          "id": "1479395537458434068"
+        },
+        "guildId": "1475512953154568333"
+      }
+    },
+    {
+      "agentId": "n8n-worker",
+      "match": {
+        "channel": "discord",
+        "peer": {
+          "kind": "channel",
+          "id": "1478865805306368163"
+        },
+        "guildId": "1475512953154568333"
+      }
+    }
+  ],
+  "messages": {
+    "ackReactionScope": "group-mentions"
+  },
+  "commands": {
+    "native": "auto",
+    "nativeSkills": "auto",
+    "restart": true,
+    "ownerDisplay": "raw"
+  },
+  "session": {
+    "dmScope": "per-channel-peer"
+  },
+  "channels": {
+    "telegram": {
+      "enabled": true,
+      "dmPolicy": "pairing",
+      "botToken": "REDACTED",
+      "groupPolicy": "allowlist",
+      "streaming": "partial"
+    },
+    "discord": {
+      "enabled": true,
+      "token": "REDACTED",
+      "groupPolicy": "allowlist",
+      "streaming": "off",
+      "guilds": {
+        "1475512953154568333": {
+          "requireMention": false,
+          "channels": {
+            "1478772230593839275": {
+              "allow": true,
+              "requireMention": false
+            },
+            "1478277461807595627": {
+              "allow": true,
+              "requireMention": false
+            },
+            "1478277630632530030": {
+              "allow": true,
+              "requireMention": false
+            },
+            "1478277891174436960": {
+              "allow": true,
+              "requireMention": false
+            },
+            "1478275763093635244": {
+              "allow": true,
+              "requireMention": false
+            },
+            "1479810885907251200": {
+              "allow": true,
+              "requireMention": false
+            },
+            "1478277286808780842": {
+              "allow": true,
+              "requireMention": false
+            },
+            "1479395533154947143": {
+              "allow": true,
+              "requireMention": false
+            },
+            "1479395535248162858": {
+              "allow": true,
+              "requireMention": false
+            },
+            "1479395536183230524": {
+              "allow": true,
+              "requireMention": false
+            },
+            "1479395537458434068": {
+              "allow": true,
+              "requireMention": false
+            },
+            "1478865805306368163": {
+              "allow": true,
+              "requireMention": false
+            }
+          }
+        }
+      }
+    }
+  },
+  "gateway": {
+    "port": 18789,
+    "mode": "local",
+    "bind": "loopback",
+    "auth": {
+      "mode": "token",
+      "token": "REDACTED"
+    },
+    "tailscale": {
+      "mode": "off",
+      "resetOnExit": false
+    }
+  }
+}
