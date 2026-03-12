@@ -46,6 +46,17 @@ backup_runtime_state() {
     done
 }
 
+snapshot_root_openclaw() {
+    mkdir -p "$ROOT_BACKUP_DIR"
+    rsync -a --delete \
+      --exclude 'memory/' \
+      --exclude 'logs/' \
+      --exclude 'canvas/' \
+      --exclude 'update-check.json' \
+      --exclude 'telegram/' \
+      /root/.openclaw/ "$ROOT_BACKUP_DIR/"
+}
+
 restore_runtime_state() {
     mkdir -p /root/.openclaw/devices /root/.openclaw/identity
 
@@ -83,7 +94,7 @@ info "============================================="
 
 # 1. Load secrets
 info "--- 1. Loading Kaggle Secrets ---"
-mkdir -p "$CRED_DIR" "$RUNTIME_BACKUP_DIR"
+mkdir -p "$CRED_DIR" "$RUNTIME_BACKUP_DIR" "$ROOT_BACKUP_DIR"
 python3 - <<'PY'
 from kaggle_secrets import UserSecretsClient
 s = UserSecretsClient()
@@ -231,7 +242,9 @@ ok "Autopush every 60s"
 # 13. Persist runtime state for next Kaggle restart
 info "--- 13. Persist Runtime State ---"
 backup_runtime_state
+snapshot_root_openclaw
 ok "Config/auth/device state backed up to persistent storage"
+ok "Compact /root/.openclaw snapshot saved to $ROOT_BACKUP_DIR"
 
 # 14. Verify
 info ""
