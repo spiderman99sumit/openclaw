@@ -93,3 +93,14 @@ echo "=== Bootstrap Complete ==="
 echo "Node:      $(node --version)"
 echo "OpenClaw:  $(openclaw --version)"
 echo "Config:    /kaggle/working/.openclaw/openclaw.json"
+
+echo ""
+echo "=== Step 7: VS Code tunnel ==="
+mkdir -p ~/.vscode/cli
+cp /kaggle/working/.vscode/token.json ~/.vscode/cli/token.json 2>/dev/null || true
+cp /kaggle/working/.vscode/code_tunnel.json ~/.vscode/cli/code_tunnel.json 2>/dev/null || true
+nohup /kaggle/working/.vscode/code tunnel --accept-server-license-terms \
+  --name openclaw-kaggle > /kaggle/working/vscode_tunnel.log 2>&1 &
+sleep 5
+echo "OK: https://vscode.dev/tunnel/openclaw-kaggle/kaggle/working"
+EOF
