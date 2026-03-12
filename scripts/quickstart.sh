@@ -45,7 +45,7 @@ echo "--- 3. OpenClaw ---"
 if command -v openclaw &>/dev/null; then
     echo "✅ OpenClaw already installed"
 else
-    npm install -g openclaw@2026.3.8 > /dev/null 2>&1
+    npm install -g openclaw@2026.3.11 > /dev/null 2>&1
     echo "✅ OpenClaw installed"
 fi
 
