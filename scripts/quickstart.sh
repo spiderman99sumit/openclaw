@@ -5,6 +5,7 @@ AGENTS=(main manager maya jordan sam creative-lab prompt-engineer ops-guardian w
 PERSIST_DIR="/kaggle/working/.openclaw"
 CRED_DIR="$PERSIST_DIR/credentials"
 RUNTIME_BACKUP_DIR="$PERSIST_DIR/runtime-backups"
+ROOT_BACKUP_DIR="$PERSIST_DIR/root-openclaw-backup"
 WORKSPACE_DIR="/kaggle/working/.openclaw/workspace"
 LOG_GATEWAY="/kaggle/working/openclaw_gateway.log"
 LOG_N8N="/kaggle/working/n8n.log"
