@@ -1,7 +1,7 @@
 {
   "meta": {
     "lastTouchedVersion": "2026.3.8",
-    "lastTouchedAt": "2026-03-12T20:02:11.278Z"
+    "lastTouchedAt": "2026-03-12T20:04:57.877Z"
   },
   "wizard": {
     "lastRunAt": "2026-03-12T14:40:11.000Z",
@@ -345,13 +345,16 @@
     "bind": "loopback",
     "controlUi": {
       "allowedOrigins": [
-        "https://0vx6wsg3-18789.use.devtunnels.ms"
+        "http://localhost:18789"
       ]
     },
     "auth": {
       "mode": "token",
       "token": "REDACTED"
     },
+    "trustedProxies": [
+      "127.0.0.1"
+    ],
     "tailscale": {
       "mode": "off",
       "resetOnExit": false
