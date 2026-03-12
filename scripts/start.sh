@@ -35,6 +35,7 @@ keys = [
     "GIT_AUTHOR_NAME", "GITHUB_REPO_URL", "GITHUB_TOKEN",
     "LIGHTNING_API_KEY", "LIGHTNING_USER_ID", "MODAL_TOKEN_ID",
     "MODAL_TOKEN_SECRET", "OPENROUTER_API_KEY", "OPENROUTER_MODEL",
+    "GATEWAY_AUTH_TOKEN",
 ]
 
 os.makedirs("/kaggle/working/.openclaw/credentials", exist_ok=True)
@@ -59,7 +60,6 @@ lines += [
     "GITHUB_BRANCH=main",
     "OPENCLAW_CONFIG_PATH=/kaggle/working/.openclaw/openclaw.json",
     "OPENCLAW_STATE_DIR=/kaggle/working/.openclaw/state",
-    "COMFYUI_BASE_URL=", "NICEGPU_API_KEY=", "GATEWAY_AUTH_TOKEN=",
     f"N8N_ENCRYPTION_KEY={sec.token_hex(16)}",
 ]
 
