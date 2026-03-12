@@ -5,15 +5,14 @@ import time
 import json
 import urllib.request
 
-# Build image with ComfyUI + SDXL
 comfyui_image = (
     modal.Image.debian_slim(python_version="3.11")
     .apt_install("git", "wget", "libgl1", "libglib2.0-0")
     .pip_install(
-        "torch==2.1.2+cu121",
-        "torchvision==0.16.2+cu121",
-        "torchaudio==2.1.2+cu121",
-        "--index-url", "https://download.pytorch.org/whl/cu121",
+        "torch==2.1.2",
+        "torchvision==0.16.2",
+        "torchaudio==2.1.2",
+        extra_index_url="https://download.pytorch.org/whl/cu121",
     )
     .pip_install("comfy-cli", "aiohttp", "requests", "Pillow", "numpy", "safetensors")
     .run_commands("comfy install --skip-prompt --nvidia")
@@ -71,7 +70,6 @@ def build_workflow(prompt, negative_prompt, seed, steps, cfg, width, height,
         "9": {"class_type": "SaveImage",
               "inputs": {"filename_prefix": filename_prefix, "images": ["8", 0]}},
     }
-
     if lora_name:
         wf["10"] = {
             "class_type": "LoraLoader",
@@ -82,7 +80,6 @@ def build_workflow(prompt, negative_prompt, seed, steps, cfg, width, height,
         wf["3"]["inputs"]["model"] = ["10", 0]
         wf["6"]["inputs"]["clip"] = ["10", 1]
         wf["7"]["inputs"]["clip"] = ["10", 1]
-
     return wf
 
 
@@ -97,7 +94,6 @@ def generate_image(prompt: str, negative_prompt: str, seed: int = -1,
         prefix = f"{job_id}_{image_id}"
         wf = build_workflow(prompt, negative_prompt, seed, steps, cfg,
                             width, height, lora_name, lora_weight, prefix)
-
         data = json.dumps({"prompt": wf}).encode()
         req = urllib.request.Request("http://127.0.0.1:8188/prompt",
                                      data=data,
@@ -123,7 +119,6 @@ def generate_image(prompt: str, negative_prompt: str, seed: int = -1,
                             "image_id": image_id, "path": dst,
                             "size": os.path.getsize(dst),
                             "seed": wf["3"]["inputs"]["seed"]}
-
         return {"error": "timeout"}
     finally:
         proc.terminate()
@@ -171,7 +166,6 @@ def generate_batch(prompts: list, job_id: str = "test",
             if not success:
                 results.append({"status": "timeout", "image": f"{i+1:03d}.png"})
                 print(f"  ❌ Image {i+1}/{len(prompts)} timed out")
-
         vol.commit()
     finally:
         proc.terminate()
