@@ -1,12 +1,13 @@
 {
   "meta": {
-    "lastTouchedVersion": "2026.3.8",
-    "lastTouchedAt": "2026-03-12T21:11:00.196Z"
+    "lastTouchedVersion": "2026.3.11",
+    "lastTouchedAt": "2026-03-12T21:27:31.838Z"
   },
   "wizard": {
-    "lastRunAt": "2026-03-12T14:40:11.000Z",
-    "lastRunVersion": "2026.3.8",
-    "lastRunCommand": "onboard",
+    "lastRunAt": "2026-03-12T21:27:31.807Z",
+    "lastRunVersion": "2026.3.11",
+    "lastRunCommit": "eb7204008d3d05708dd06d89dadb58c3aa4eb07c",
+    "lastRunCommand": "configure",
     "lastRunMode": "local"
   },
   "auth": {
@@ -21,6 +22,9 @@
     "defaults": {
       "model": {
         "primary": "openai-codex/gpt-5.4"
+      },
+      "models": {
+        "openai-codex/gpt-5.4": {}
       },
       "workspace": "/kaggle/working/.openclaw/workspace",
       "compaction": {
