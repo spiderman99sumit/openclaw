@@ -8,7 +8,8 @@ Phase 1 responsibilities:
 - update_job_row(...)
 
 Auth model:
-- Uses service account JSON at /kaggle/working/.openclaw/credentials/sa-gdrive.json
+- Uses service account JSON at /kaggle/working/.openclaw/credentials/sa-gdrive.json for folder bootstrap + Sheets sync
+- n8n/user-auth should be used for Drive file uploads when service-account uploads are quota-blocked
 - Drive root folder + Sheet ID default from docs/FACTORY_BLUEPRINT.md
 
 Dependencies:
