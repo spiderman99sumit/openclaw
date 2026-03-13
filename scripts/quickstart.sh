@@ -13,11 +13,67 @@ LOG_GATEWAY="/kaggle/working/openclaw_gateway.log"
 LOG_N8N="/kaggle/working/n8n.log"
 LOG_VSCODE="/kaggle/working/vscode_tunnel.log"
 LOG_AUTOPUSH="/kaggle/working/autopush.log"
+LOG_NGROK="/kaggle/working/ngrok.log"
 
 warn() { echo "⚠️ $*"; }
 info() { echo "$*"; }
 ok() { echo "✅ $*"; }
 fail() { echo "❌ $*"; exit 1; }
+
+setup_ngrok_for_n8n() {
+    if [ -z "${NGROK_AUTHTOKEN:-}" ]; then
+        warn "NGROK_AUTHTOKEN not set — keeping existing N8N_PUBLIC_URL"
+        return 0
+    fi
+
+    if ! command -v ngrok >/dev/null 2>&1; then
+        info "Installing ngrok"
+        curl -fsSL https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-linux-amd64.tgz -o /tmp/ngrok.tgz
+        tar -xzf /tmp/ngrok.tgz -C /tmp
+        install -m 0755 /tmp/ngrok /usr/local/bin/ngrok
+    fi
+
+    mkdir -p /root/.config/ngrok
+    cat > /root/.config/ngrok/ngrok.yml <<EOF
+version: 2
+authtoken: ${NGROK_AUTHTOKEN}
+EOF
+
+    pkill -f 'ngrok http 5678' 2>/dev/null || true
+    rm -f "$LOG_NGROK"
+    nohup ngrok http 5678 > "$LOG_NGROK" 2>&1 &
+
+    local url=""
+    for attempt in 1 2 3 4 5 6 7 8 9 10; do
+        sleep 2
+        url="$(python3 - <<'PY'
+import json, urllib.request
+try:
+    with urllib.request.urlopen('http://127.0.0.1:4040/api/tunnels', timeout=2) as r:
+        data=json.load(r)
+    tunnels=data.get('tunnels',[])
+    https=[t.get('public_url','') for t in tunnels if t.get('public_url','').startswith('https://')]
+    print(https[0] if https else '')
+except Exception:
+    print('')
+PY
+)"
+        if [ -n "$url" ]; then
+            export N8N_PUBLIC_URL="$url"
+            export WEBHOOK_URL="$url"
+            export N8N_EDITOR_BASE_URL="$url"
+            export N8N_PROTOCOL="https"
+            export N8N_HOST="0.0.0.0"
+            export N8N_PORT="5678"
+            ok "Using ngrok N8N public URL: $url"
+            return 0
+        fi
+    done
+
+    warn "ngrok did not return a public URL — keeping existing N8N_PUBLIC_URL"
+    tail -50 "$LOG_NGROK" || true
+    return 0
+}
 
 backup_runtime_state() {
     mkdir -p "$RUNTIME_BACKUP_DIR/auth-profiles" "$RUNTIME_BACKUP_DIR/devices" "$RUNTIME_BACKUP_DIR/identity"
@@ -163,7 +219,7 @@ keys = [
     'GIT_AUTHOR_NAME','GITHUB_REPO_URL','GITHUB_TOKEN',
     'LIGHTNING_API_KEY','LIGHTNING_USER_ID','MODAL_TOKEN_ID',
     'MODAL_TOKEN_SECRET','OPENROUTER_API_KEY','OPENROUTER_MODEL',
-    'GATEWAY_AUTH_TOKEN','N8N_PUBLIC_URL'
+    'GATEWAY_AUTH_TOKEN','N8N_PUBLIC_URL','NGROK_AUTHTOKEN'
 ]
 found = 0
 path = '/kaggle/working/.openclaw/credentials/openclaw-secrets.env'
@@ -180,6 +236,7 @@ PY
 source "$CRED_DIR/openclaw-secrets.env"
 
 export N8N_USER_FOLDER="$PERSIST_N8N_DIR"
+setup_ngrok_for_n8n
 
 if [ -n "${N8N_PUBLIC_URL:-}" ]; then
     export WEBHOOK_URL="$N8N_PUBLIC_URL"
