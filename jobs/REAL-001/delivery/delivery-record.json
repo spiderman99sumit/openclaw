@@ -1,0 +1,22 @@
+{
+  "job_id": "REAL-001",
+  "client_name": "RealClient",
+  "persona_name": "Influencer",
+  "package_link": "https://drive.google.com/drive/folders/1su6H6sajW_o8EOQ6Gk6-Nk_vl2uVXvYV",
+  "delivered_at": "2026-03-13T21:35:00Z",
+  "final_assets": [
+    "final-001-seed88888.png",
+    "final-002-seed88889.png",
+    "final-003-seed88890.png",
+    "final-004-seed88891.png",
+    "final-005-seed88892.png"
+  ],
+  "final_drive_links": [
+    "https://drive.google.com/file/d/1Ab0aM0aWJCDR6xA_sUpAzcYZxk1QWcW5/view",
+    "https://drive.google.com/file/d/1u9CGht3Q2vajARPOnFXsM6CLxyvQDA6p/view",
+    "https://drive.google.com/file/d/1n3_PRmDP2tXdH7m07fK9K-NCC7J1shjE/view",
+    "https://drive.google.com/file/d/1zeAl1SoghOhBofvNOk8MFOS50nI7Sl1R/view",
+    "https://drive.google.com/file/d/1q88q3z_FnzymCWobvuJ6upjOrBRQKPdZ/view"
+  ],
+  "notes": "First real generation pipeline"
+}
