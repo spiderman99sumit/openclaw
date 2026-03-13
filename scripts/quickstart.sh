@@ -133,7 +133,7 @@ keys = [
     'GIT_AUTHOR_NAME','GITHUB_REPO_URL','GITHUB_TOKEN',
     'LIGHTNING_API_KEY','LIGHTNING_USER_ID','MODAL_TOKEN_ID',
     'MODAL_TOKEN_SECRET','OPENROUTER_API_KEY','OPENROUTER_MODEL',
-    'GATEWAY_AUTH_TOKEN'
+    'GATEWAY_AUTH_TOKEN','N8N_PUBLIC_URL'
 ]
 found = 0
 path = '/kaggle/working/.openclaw/credentials/openclaw-secrets.env'
@@ -148,6 +148,13 @@ with open(path, 'w') as f:
 print(f'✅ Secrets: {found}/{len(keys)} loaded')
 PY
 source "$CRED_DIR/openclaw-secrets.env"
+
+if [ -z "${N8N_PUBLIC_URL:-}" ] && [ -f "$LOG_VSCODE" ]; then
+    tunnel_url="$(grep -Eo 'https://[^ ]+\.use\.devtunnels\.ms' "$LOG_VSCODE" | head -1 || true)"
+    if [ -n "$tunnel_url" ]; then
+        export N8N_PUBLIC_URL="${tunnel_url/openclaw-kaggle\/kaggle\/working\/.vscode/0vx6wsg3-5678.use.devtunnels.ms}"
+    fi
+fi
 
 # 2. Node
 info "--- 2. Node.js ---"
