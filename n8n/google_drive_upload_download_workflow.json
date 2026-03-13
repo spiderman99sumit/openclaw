@@ -1,209 +1,196 @@
-[
-  {
-    "id": "33333333-3333-4333-8333-333333333333",
-    "name": "Google Drive Upload + Download Test",
-    "nodes": [
-      {
-        "parameters": {},
-        "id": "manual_trigger",
-        "name": "When clicking ‘Execute workflow’",
-        "type": "n8n-nodes-base.manualTrigger",
-        "typeVersion": 1,
-        "position": [220, 300]
-      },
-      {
-        "parameters": {
-          "assignments": {
-            "assignments": [
-              {
-                "name": "local_file_path",
-                "value": "/kaggle/working/.openclaw/workspace/n8n/test-upload.txt",
-                "type": "string"
-              },
-              {
-                "name": "upload_file_name",
-                "value": "openclaw-drive-smoke-test.txt",
-                "type": "string"
-              }
-            ]
-          },
-          "options": {}
+{
+  "id": "33333333-3333-4333-8333-333333333333",
+  "name": "Google Drive Upload + Download Test",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "Manual_Trigger",
+      "name": "When clicking ‘Execute workflow’",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "name": "local_file_path",
+              "value": "/kaggle/working/.openclaw/workspace/n8n/test-upload.txt",
+              "type": "string"
+            },
+            {
+              "name": "upload_file_name",
+              "value": "openclaw-drive-smoke-test.txt",
+              "type": "string"
+            }
+          ]
         },
-        "id": "set_input_values",
-        "name": "Set Input Values",
-        "type": "n8n-nodes-base.set",
-        "typeVersion": 3.4,
-        "position": [460, 300]
+        "options": {}
       },
-      {
-        "parameters": {
-          "fileSelector": "={{$json.local_file_path}}",
-          "dataPropertyName": "data"
-        },
-        "id": "read_binary_file",
-        "name": "Read Binary File",
-        "type": "n8n-nodes-base.readBinaryFiles",
-        "typeVersion": 1,
-        "position": [700, 300]
+      "id": "Set_Input_Values",
+      "name": "Set Input Values",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "filePath": "={{$json.local_file_path}}",
+        "dataPropertyName": "data"
       },
-      {
-        "parameters": {
-          "authentication": "oAuth2",
-          "resource": "file",
-          "operation": "upload",
-          "inputDataFieldName": "data",
-          "name": "={{$json.upload_file_name}}",
-          "driveId": {
-            "mode": "list",
-            "value": "My Drive"
-          },
-          "folderId": {
-            "mode": "id",
-            "value": "root"
-          },
-          "options": {}
-        },
-        "id": "google_drive_upload",
-        "name": "Google Drive Upload",
-        "type": "n8n-nodes-base.googleDrive",
-        "typeVersion": 3,
-        "position": [960, 300],
-        "credentials": {
-          "googleDriveOAuth2Api": {
-            "id": "pRwzmNMPiFAGaBK2",
-            "name": "Google Drive account"
-          }
+      "id": "Read_Binary_File",
+      "name": "Read Binary File",
+      "type": "n8n-nodes-base.readBinaryFile",
+      "typeVersion": 1,
+      "position": [700, 300]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "file",
+        "operation": "upload",
+        "inputDataFieldName": "data",
+        "name": "={{$('Set Input Values').item.json.upload_file_name}}",
+        "driveId": "root",
+        "folderId": "root",
+        "options": {}
+      },
+      "id": "Google_Drive_Upload",
+      "name": "Google Drive Upload",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [940, 300],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "pRwzmNMPiFAGaBK2",
+          "name": "Google Drive account"
         }
-      },
-      {
-        "parameters": {
-          "authentication": "oAuth2",
-          "resource": "file",
-          "operation": "download",
-          "fileId": {
-            "mode": "id",
-            "value": "={{$json.id}}"
-          },
-          "options": {
-            "binaryPropertyName": "downloaded_file"
-          }
-        },
-        "id": "google_drive_download",
-        "name": "Google Drive Download",
-        "type": "n8n-nodes-base.googleDrive",
-        "typeVersion": 3,
-        "position": [1200, 300],
-        "credentials": {
-          "googleDriveOAuth2Api": {
-            "id": "pRwzmNMPiFAGaBK2",
-            "name": "Google Drive account"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "assignments": {
-            "assignments": [
-              {
-                "name": "uploaded_file_id",
-                "value": "={{$('Google Drive Upload').item.json.id}}",
-                "type": "string"
-              },
-              {
-                "name": "uploaded_file_name",
-                "value": "={{$('Google Drive Upload').item.json.name}}",
-                "type": "string"
-              },
-              {
-                "name": "uploaded_file_link",
-                "value": "={{$('Google Drive Upload').item.json.webViewLink || ''}}",
-                "type": "string"
-              },
-              {
-                "name": "downloaded_binary_field",
-                "value": "downloaded_file",
-                "type": "string"
-              },
-              {
-                "name": "downloaded_file_size",
-                "value": "={{$binary.downloaded_file.fileSize || ''}}",
-                "type": "string"
-              },
-              {
-                "name": "downloaded_file_name",
-                "value": "={{$binary.downloaded_file.fileName || ''}}",
-                "type": "string"
-              }
-            ]
-          },
-          "options": {}
-        },
-        "id": "build_summary",
-        "name": "Build Summary",
-        "type": "n8n-nodes-base.set",
-        "typeVersion": 3.4,
-        "position": [1440, 300]
-      }
-    ],
-    "connections": {
-      "When clicking ‘Execute workflow’": {
-        "main": [
-          [
-            {
-              "node": "Set Input Values",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Set Input Values": {
-        "main": [
-          [
-            {
-              "node": "Read Binary File",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Read Binary File": {
-        "main": [
-          [
-            {
-              "node": "Google Drive Upload",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Google Drive Upload": {
-        "main": [
-          [
-            {
-              "node": "Google Drive Download",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Google Drive Download": {
-        "main": [
-          [
-            {
-              "node": "Build Summary",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
       }
     },
-    "active": false,
-    "settings": {},
-    "versionId": "33333333-3333-4333-8333-333333333334"
-  }
-]
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "file",
+        "operation": "download",
+        "fileId": {
+          "mode": "id",
+          "value": "={{$json.id}}"
+        },
+        "options": {
+          "binaryPropertyName": "downloaded_file"
+        }
+      },
+      "id": "Google_Drive_Download",
+      "name": "Google Drive Download",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [1180, 300],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "pRwzmNMPiFAGaBK2",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "name": "uploaded_file_id",
+              "value": "={{$('Google Drive Upload').item.json.id}}",
+              "type": "string"
+            },
+            {
+              "name": "uploaded_file_name",
+              "value": "={{$('Google Drive Upload').item.json.name}}",
+              "type": "string"
+            },
+            {
+              "name": "uploaded_file_link",
+              "value": "={{$('Google Drive Upload').item.json.webViewLink || ''}}",
+              "type": "string"
+            },
+            {
+              "name": "downloaded_file_name",
+              "value": "={{$binary.downloaded_file.fileName || ''}}",
+              "type": "string"
+            },
+            {
+              "name": "downloaded_file_size",
+              "value": "={{$binary.downloaded_file.fileSize || ''}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "Build_Summary",
+      "name": "Build Summary",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [1420, 300]
+    }
+  ],
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Set Input Values",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Input Values": {
+      "main": [
+        [
+          {
+            "node": "Read Binary File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Binary File": {
+      "main": [
+        [
+          {
+            "node": "Google Drive Upload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive Upload": {
+      "main": [
+        [
+          {
+            "node": "Google Drive Download",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive Download": {
+      "main": [
+        [
+          {
+            "node": "Build Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {},
+  "versionId": "33333333-3333-4333-8333-333333333334"
+}
