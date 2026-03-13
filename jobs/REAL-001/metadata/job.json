@@ -1,0 +1,48 @@
+{
+  "job_id": "REAL-001",
+  "client_name": "RealClient",
+  "persona_name": "Influencer",
+  "status": "new",
+  "created_at": "2026-03-13T21:30:29Z",
+  "updated_at": "2026-03-13T21:30:29Z",
+  "drive": {
+    "root_folder_id": "",
+    "root_folder_link": "",
+    "subfolders": {
+      "intake": "",
+      "references": "",
+      "dataset": "",
+      "previews": "",
+      "approvals": "",
+      "lora": "",
+      "final_batches": "",
+      "delivery": "",
+      "logs": "",
+      "metadata": ""
+    }
+  },
+  "preview": {
+    "assets": [],
+    "drive_links": [],
+    "uploaded": false,
+    "uploaded_at": "",
+    "review_status": "pending"
+  },
+  "training": {
+    "model_type": "",
+    "platform": "",
+    "run_id": "",
+    "checkpoint_path": "",
+    "status": "not_started"
+  },
+  "final_batch": {
+    "assets": [],
+    "drive_links": [],
+    "qa_status": "pending"
+  },
+  "delivery": {
+    "package_link": "",
+    "delivered": false,
+    "delivered_at": ""
+  }
+}
