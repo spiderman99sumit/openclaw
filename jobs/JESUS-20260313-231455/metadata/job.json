@@ -2,9 +2,9 @@
   "job_id": "JESUS-20260313-231455",
   "client_name": "jesus",
   "persona_name": "jesus-persona",
-  "status": "preview_review",
+  "status": "preview_running",
   "created_at": "2026-03-13T23:14:55Z",
-  "updated_at": "2026-03-13T23:22:17Z",
+  "updated_at": "2026-03-13T23:26:10Z",
   "drive": {
     "root_folder_id": "1YraiZZvhUSqFzJjJuPQ5q0R1Q7vn23Bc",
     "root_folder_link": "https://drive.google.com/drive/folders/1YraiZZvhUSqFzJjJuPQ5q0R1Q7vn23Bc",
@@ -48,7 +48,7 @@
     ],
     "uploaded": true,
     "uploaded_at": "2026-03-13T23:22:13Z",
-    "review_status": "ready",
+    "review_status": "rejected",
     "generation_record": {
       "base_seed": 1675550170,
       "endpoint": "https://sumit-pbh999--comfyui-zimage-generate.modal.run",

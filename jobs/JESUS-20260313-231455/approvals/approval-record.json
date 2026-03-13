@@ -1,0 +1,19 @@
+{
+  "decision": "rejected",
+  "approved_files": [],
+  "rejected_files": [
+    "preview-001-seed1675550170.png",
+    "preview-002-seed1675550171.png",
+    "preview-003-seed1675550172.png",
+    "preview-004-seed1675550173.png",
+    "preview-005-seed1675550174.png",
+    "preview-006-seed1675550175.png",
+    "preview-007-seed1675550176.png",
+    "preview-008-seed1675550177.png",
+    "preview-009-seed1675550178.png",
+    "preview-010-seed1675550179.png"
+  ],
+  "notes": "images are not good ",
+  "decided_at": "2026-03-13T23:26:10Z",
+  "decided_by": "manual"
+}
