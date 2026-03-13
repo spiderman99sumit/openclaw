@@ -4,7 +4,7 @@
   "persona_name": "FitnessInfluencer",
   "status": "preview_running",
   "created_at": "2026-03-13T22:25:10Z",
-  "updated_at": "2026-03-13T22:26:54Z",
+  "updated_at": "2026-03-13T22:28:40Z",
   "drive": {
     "root_folder_id": "1K--9d2gsNDqfSUA9FpJnn05WbsFpQ9Fe",
     "root_folder_link": "https://drive.google.com/drive/folders/1K--9d2gsNDqfSUA9FpJnn05WbsFpQ9Fe",
@@ -22,11 +22,21 @@
     }
   },
   "preview": {
-    "assets": [],
+    "assets": [
+      "preview-001-seed966322072.png",
+      "preview-002-seed966322073.png",
+      "preview-003-seed966322074.png"
+    ],
     "drive_links": [],
     "uploaded": false,
     "uploaded_at": "",
-    "review_status": "pending"
+    "review_status": "pending",
+    "generation_record": {
+      "base_seed": 966322072,
+      "endpoint": "https://sumit-pbh999--comfyui-zimage-generate.modal.run",
+      "generated_at": "2026-03-13T22:28:40Z",
+      "count": 3
+    }
   },
   "training": {
     "model_type": "",

@@ -1,0 +1,20 @@
+{
+  "job_id": "PROMPT-TEST-001",
+  "generated_at": "2026-03-13T22:28:40Z",
+  "endpoint": "https://sumit-pbh999--comfyui-zimage-generate.modal.run",
+  "base_seed": 966322072,
+  "width": 864,
+  "height": 1536,
+  "prompts_used": [
+    "RAW photo of p3r5on running on a sunrise mountain trail, wearing a bright teal sports bra and black leggings, sweat glistening, ultra-realistic, 8k resolution, highly detailed.",
+    "RAW photo of p3r5on doing jump squats on a sandy beach at golden hour, turquoise waves behind, fitted white tank top and navy shorts, energetic expression, ultra-realistic, 8k resolution, highly detailed.",
+    "RAW photo of p3r5on performing a yoga pose on a cliff overlooking the ocean, soft pastel sky, wearing a lavender cropped hoodie and gray leggings, calm yet strong pose, ultra-realistic, 8k resolution, highly detailed."
+  ],
+  "negative_prompt": "low resolution, cartoon, anime, CGI, 3D render, plastic skin, distorted face, blurry, deformed",
+  "files_generated": [
+    "preview-001-seed966322072.png",
+    "preview-002-seed966322073.png",
+    "preview-003-seed966322074.png"
+  ],
+  "errors": []
+}
