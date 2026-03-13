@@ -4,7 +4,7 @@
   "persona_name": "jesus-persona",
   "status": "preview_running",
   "created_at": "2026-03-13T23:14:55Z",
-  "updated_at": "2026-03-13T23:17:24Z",
+  "updated_at": "2026-03-13T23:21:30Z",
   "drive": {
     "root_folder_id": "1YraiZZvhUSqFzJjJuPQ5q0R1Q7vn23Bc",
     "root_folder_link": "https://drive.google.com/drive/folders/1YraiZZvhUSqFzJjJuPQ5q0R1Q7vn23Bc",
@@ -22,11 +22,28 @@
     }
   },
   "preview": {
-    "assets": [],
+    "assets": [
+      "preview-001-seed1675550170.png",
+      "preview-002-seed1675550171.png",
+      "preview-003-seed1675550172.png",
+      "preview-004-seed1675550173.png",
+      "preview-005-seed1675550174.png",
+      "preview-006-seed1675550175.png",
+      "preview-007-seed1675550176.png",
+      "preview-008-seed1675550177.png",
+      "preview-009-seed1675550178.png",
+      "preview-010-seed1675550179.png"
+    ],
     "drive_links": [],
     "uploaded": false,
     "uploaded_at": "",
-    "review_status": "pending"
+    "review_status": "pending",
+    "generation_record": {
+      "base_seed": 1675550170,
+      "endpoint": "https://sumit-pbh999--comfyui-zimage-generate.modal.run",
+      "generated_at": "2026-03-13T23:21:30Z",
+      "count": 10
+    }
   },
   "training": {
     "model_type": "",

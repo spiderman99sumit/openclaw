@@ -1,0 +1,34 @@
+{
+  "job_id": "JESUS-20260313-231455",
+  "generated_at": "2026-03-13T23:21:30Z",
+  "endpoint": "https://sumit-pbh999--comfyui-zimage-generate.modal.run",
+  "base_seed": 1675550170,
+  "width": 864,
+  "height": 1536,
+  "prompts_used": [
+    "RAW photo of p3r5on standing on a cliff overlooking a vibrant turquoise sea at golden hour, wearing a bold red bomber jacket, aviator sunglasses, wind\u2011swept hair, confident pose looking out, ultra-realistic, 8k resolution, highly detailed.",
+    "RAW photo of p3r5on exploring a bustling night market in Bangkok, neon signs reflecting on wet pavement, wearing a striking electric blue leather trench coat, neon sneakers, mid\u2011stride with a street food snack, ultra-realistic, 8k resolution, highly detailed.",
+    "RAW photo of p3r5on atop a snow\u2011capped mountain peak, sunrise casting pink light, dressed in a bold orange insulated parka with reflective stripes, goggles pushed up, arms wide in triumph, ultra-realistic, 8k resolution, highly detailed.",
+    "RAW photo of p3r5on riding a vintage motorcycle along a desert highway at sunset, wearing a daring black leather jumpsuit with silver studs, dust kicking up, helmet under arm, fierce gaze, ultra-realistic, 8k resolution, highly detailed.",
+    "RAW photo of p3r5on kayaking through bioluminescent waters in Puerto Rico at night, wearing a bright cyan wetsuit with geometric patterns, paddle slicing glowing water, expression of awe, ultra-realistic, 8k resolution, highly detailed.",
+    "RAW photo of p3r5on standing in front of the ancient stone arches of Petra, midday sun creating sharp shadows, wearing a bold patterned kimono\u2011inspired jacket in magenta and gold, barefoot sandals, hand on hip, ultra-realistic, 8k resolution, highly detailed.",
+    "RAW photo of p3r5on lounging on a rooftop infinity pool overlooking a futuristic city skyline at twilight, wearing a striking metallic silver one\u2011piece swimsuit, sunglasses reflective, cocktail in hand, relaxed yet confident pose, ultra-realistic, 8k resolution, highly detailed.",
+    "RAW photo of p3r5on trekking through a dense Amazon rainforest, shafts of light piercing canopy, wearing a daring camouflage print utility vest with bright yellow accents, binoculars around neck, determined expression, ultra-realistic, 8k resolution, highly detailed.",
+    "RAW photo of p3r5on riding a classic red double\u2011decker bus through London streets during rain, wearing a bold yellow raincoat with oversized hood, holding a transparent umbrella, cheeky smile, ultra-realistic, 8k resolution, highly detailed.",
+    "RAW photo of p3r5on camping under a star\u2011filled sky in the Sahara Desert, wearing a bold patterned silk scarf and desert boots, sitting by a low fire, looking up at constellations, ultra-realistic, 8k resolution, highly detailed."
+  ],
+  "negative_prompt": "low resolution, cartoon, anime, CGI, 3D render, plastic skin, distorted face, blurry, deformed",
+  "files_generated": [
+    "preview-001-seed1675550170.png",
+    "preview-002-seed1675550171.png",
+    "preview-003-seed1675550172.png",
+    "preview-004-seed1675550173.png",
+    "preview-005-seed1675550174.png",
+    "preview-006-seed1675550175.png",
+    "preview-007-seed1675550176.png",
+    "preview-008-seed1675550177.png",
+    "preview-009-seed1675550178.png",
+    "preview-010-seed1675550179.png"
+  ],
+  "errors": []
+}
