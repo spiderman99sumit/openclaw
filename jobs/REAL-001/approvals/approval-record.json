@@ -1,0 +1,12 @@
+{
+  "decision": "approved",
+  "approved_files": [
+    "preview-001-seed55555.png",
+    "preview-002-seed55556.png",
+    "preview-003-seed55557.png"
+  ],
+  "rejected_files": [],
+  "notes": "",
+  "decided_at": "2026-03-13T21:32:59Z",
+  "decided_by": "manual"
+}

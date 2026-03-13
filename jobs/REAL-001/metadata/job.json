@@ -2,9 +2,9 @@
   "job_id": "REAL-001",
   "client_name": "RealClient",
   "persona_name": "Influencer",
-  "status": "preview_running",
+  "status": "final_generation_running",
   "created_at": "2026-03-13T21:30:29Z",
-  "updated_at": "2026-03-13T21:32:42Z",
+  "updated_at": "2026-03-13T21:33:00Z",
   "drive": {
     "root_folder_id": "1zf9_sWT6GH8PH2W7_GVcS6AeNPEZ4igS",
     "root_folder_link": "https://drive.google.com/drive/folders/1zf9_sWT6GH8PH2W7_GVcS6AeNPEZ4igS",
@@ -27,23 +27,34 @@
       "preview-002-seed55556.png",
       "preview-003-seed55557.png"
     ],
-    "drive_links": [],
-    "uploaded": false,
-    "uploaded_at": "",
-    "review_status": "pending",
+    "drive_links": [
+      "https://drive.google.com/file/d/1X_0Dd_03ZolPrccsVcIjEbVtu77x32Vw/view",
+      "https://drive.google.com/file/d/1IH_wSwJiy1aVWFgcLngPOosAQ0F5RwOF/view",
+      "https://drive.google.com/file/d/107VEis9AUF-vhvMB40c21ML-oL4tPMQM/view"
+    ],
+    "uploaded": true,
+    "uploaded_at": "2026-03-13T21:32:54Z",
+    "review_status": "approved",
     "generation_record": {
       "base_seed": 55555,
       "endpoint": "https://sumit-pbh999--comfyui-zimage-generate.modal.run",
       "generated_at": "2026-03-13T21:32:42Z",
       "count": 3
-    }
+    },
+    "approved_files": [
+      "preview-001-seed55555.png",
+      "preview-002-seed55556.png",
+      "preview-003-seed55557.png"
+    ]
   },
   "training": {
-    "model_type": "",
-    "platform": "",
-    "run_id": "",
-    "checkpoint_path": "",
-    "status": "not_started"
+    "model_type": "sdxl-lora",
+    "platform": "modal",
+    "run_id": "REAL-001-run-001",
+    "checkpoint_path": "modal-volume/loras/REAL-001.safetensors",
+    "status": "training_done",
+    "started_at": "2026-03-13T21:32:59Z",
+    "completed_at": "2026-03-13T21:33:00Z"
   },
   "final_batch": {
     "assets": [],
@@ -60,5 +71,5 @@
   "preview_folder": "https://drive.google.com/drive/folders/1j6XLpgaz-PxWsfomhFStCRjS0PBKws7x",
   "final_folder": "https://drive.google.com/drive/folders/1JAAESStX1G03Nt16Uim4Ls27AixRHj0g",
   "delivery_folder": "https://drive.google.com/drive/folders/1su6H6sajW_o8EOQ6Gk6-Nk_vl2uVXvYV",
-  "last_updated": "2026-03-13T21:30:49Z"
+  "last_updated": "2026-03-13T21:32:58Z"
 }
