@@ -2,9 +2,9 @@
   "job_id": "JESUS-20260313-231455",
   "client_name": "jesus",
   "persona_name": "jesus-persona",
-  "status": "preview_running",
+  "status": "preview_review",
   "created_at": "2026-03-13T23:14:55Z",
-  "updated_at": "2026-03-13T23:21:30Z",
+  "updated_at": "2026-03-13T23:22:17Z",
   "drive": {
     "root_folder_id": "1YraiZZvhUSqFzJjJuPQ5q0R1Q7vn23Bc",
     "root_folder_link": "https://drive.google.com/drive/folders/1YraiZZvhUSqFzJjJuPQ5q0R1Q7vn23Bc",
@@ -34,10 +34,21 @@
       "preview-009-seed1675550178.png",
       "preview-010-seed1675550179.png"
     ],
-    "drive_links": [],
-    "uploaded": false,
-    "uploaded_at": "",
-    "review_status": "pending",
+    "drive_links": [
+      "https://drive.google.com/file/d/11Hb3DYSjXQm-DeiRPSxYpGDnz4XCZWQw/view",
+      "https://drive.google.com/file/d/15zoxgjEzXETNkLwpXj7NbTNhf7IWvgae/view",
+      "https://drive.google.com/file/d/1913SVNSIeTXeLkqPdTKTL-LiehbUfp_W/view",
+      "https://drive.google.com/file/d/1HgsrdOAvoBa3KB_qmMYK9SNX8sjuP_ax/view",
+      "https://drive.google.com/file/d/1ImO0iTWOuzRzSF_pcOUktg1o3EsmHZcP/view",
+      "https://drive.google.com/file/d/1OpPXAfrLA7D609hbNj8b8bGogH9cZkq6/view",
+      "https://drive.google.com/file/d/1X75ZL9wlT66yCxIHcAj-o_1_zsOt7xSb/view",
+      "https://drive.google.com/file/d/1LBDKk15hvqjBsiBuCHsz2NQYOB8HNGHt/view",
+      "https://drive.google.com/file/d/1S4OoLc9zvZBiXJ55yC1YnvCucMhntijw/view",
+      "https://drive.google.com/file/d/1zfIqGtKYVKCjTgYtNwLwadm7IZEccSMp/view"
+    ],
+    "uploaded": true,
+    "uploaded_at": "2026-03-13T23:22:13Z",
+    "review_status": "ready",
     "generation_record": {
       "base_seed": 1675550170,
       "endpoint": "https://sumit-pbh999--comfyui-zimage-generate.modal.run",
@@ -67,5 +78,5 @@
   "preview_folder": "https://drive.google.com/drive/folders/1VTZLEGwYNfZUdIJj2i0du6UcreNbMD-Z",
   "final_folder": "https://drive.google.com/drive/folders/1ej8FLtU6tx14UtA-YReTt7cZ-pvyisBb",
   "delivery_folder": "https://drive.google.com/drive/folders/1NMZ3lXvdZolxNKH8yCfTALGxKCznY_jA",
-  "last_updated": "2026-03-13T23:15:17Z"
+  "last_updated": "2026-03-13T23:22:17Z"
 }
