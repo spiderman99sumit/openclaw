@@ -13,9 +13,11 @@ This avoids the Google Drive service-account upload quota issue.
 - Kaggle helper: `scripts/factory_drive_sync.py`
 
 ## Required n8n credentials
-Create/connect these in n8n:
-- `google_drive_factory_user` (Google Drive OAuth2 user credential)
-- `google_sheets_factory_user` (Google Sheets OAuth2 user credential)
+Verified in this n8n instance:
+- `Google Drive account` (`googleDriveOAuth2Api`)
+- `Google Sheets account` (`googleSheetsOAuth2Api`)
+
+The workflow JSON has been updated to reference these actual credentials.
 
 ## Import workflow
 Import:

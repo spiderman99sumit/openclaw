@@ -96,8 +96,8 @@
       ],
       "credentials": {
         "googleDriveOAuth2Api": {
-          "id": "google_drive_factory_user",
-          "name": "google_drive_factory_user"
+          "id": "ZLI8RHLiKnEmqvhW",
+          "name": "Google Drive account"
         }
       }
     },
@@ -193,8 +193,8 @@
       ],
       "credentials": {
         "googleSheetsOAuth2Api": {
-          "id": "google_sheets_factory_user",
-          "name": "google_sheets_factory_user"
+          "id": "m8byFknpICqtcSus",
+          "name": "Google Sheets account"
         }
       }
     },
