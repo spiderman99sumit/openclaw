@@ -1,0 +1,18 @@
+{
+  "job_id": "auto-test-001",
+  "client_name": "AutoTestClient",
+  "persona_name": "TestPersona",
+  "package_link": "https://drive.google.com/drive/folders/1H_r6drOI20Sf58SZ-r_ZOYurA9VR4XRL",
+  "delivered_at": "2026-03-13T19:58:01Z",
+  "final_assets": [
+    "preview-001-seed77777.jpg",
+    "preview-002-seed77778.jpg",
+    "preview-003-seed77779.jpg"
+  ],
+  "final_drive_links": [
+    "https://drive.google.com/file/d/1A7imiyUqoMOcdEealDqfsdxY5SRkJgSp/view",
+    "https://drive.google.com/file/d/1s4HOpryevCIE1k-Pw4LX8RnekciNFwaA/view",
+    "https://drive.google.com/file/d/1SsS2hG5PynvFWzmlA6s8ecsZRPslkh7V/view"
+  ],
+  "notes": "Full auto pipeline test delivery"
+}

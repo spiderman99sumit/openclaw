@@ -2,9 +2,9 @@
   "job_id": "auto-test-001",
   "client_name": "AutoTestClient",
   "persona_name": "TestPersona",
-  "status": "preview_running",
+  "status": "delivered",
   "created_at": "2026-03-13T19:56:08Z",
-  "updated_at": "2026-03-13T19:56:28Z",
+  "updated_at": "2026-03-13T19:58:01Z",
   "drive": {
     "root_folder_id": "1ifD01WT-6iXUdFj7uGeOZe4jhYLTvrF8",
     "root_folder_link": "https://drive.google.com/drive/folders/1ifD01WT-6iXUdFj7uGeOZe4jhYLTvrF8",
@@ -22,33 +22,66 @@
     }
   },
   "preview": {
-    "assets": [],
-    "drive_links": [],
-    "uploaded": false,
-    "uploaded_at": "",
-    "review_status": "pending"
+    "assets": [
+      "preview-001-seed77777.jpg",
+      "preview-002-seed77778.jpg",
+      "preview-003-seed77779.jpg"
+    ],
+    "drive_links": [
+      "https://drive.google.com/file/d/1A3MOuTJWLM5sd1T5fAzxHPa2y-DJ9yK-/view",
+      "https://drive.google.com/file/d/1QsiyG3ysfZhN5etNByUx8aOu2RL-QFEw/view",
+      "https://drive.google.com/file/d/1cN7DwpQtDXkHZhT_wz4SZ2_GuLvNyf-5/view"
+    ],
+    "uploaded": true,
+    "uploaded_at": "2026-03-13T19:57:42Z",
+    "review_status": "approved",
+    "generation_record": {
+      "base_seed": 77777,
+      "endpoint": "https://sumit-pbh999--comfyui-zimage-generate.modal.run",
+      "generated_at": "2026-03-13T19:57:29Z",
+      "count": 3
+    },
+    "approved_files": [
+      "preview-001-seed77777.jpg",
+      "preview-002-seed77778.jpg",
+      "preview-003-seed77779.jpg"
+    ]
   },
   "training": {
-    "model_type": "",
-    "platform": "",
-    "run_id": "",
-    "checkpoint_path": "",
-    "status": "not_started"
+    "model_type": "sdxl-lora",
+    "platform": "modal",
+    "run_id": "auto-test-001-run-001",
+    "checkpoint_path": "modal-volume/loras/auto-test-001.safetensors",
+    "status": "training_done",
+    "started_at": "2026-03-13T19:57:48Z",
+    "completed_at": "2026-03-13T19:57:48Z"
   },
   "final_batch": {
-    "assets": [],
-    "drive_links": [],
-    "qa_status": "pending"
+    "assets": [
+      "preview-001-seed77777.jpg",
+      "preview-002-seed77778.jpg",
+      "preview-003-seed77779.jpg"
+    ],
+    "drive_links": [
+      "https://drive.google.com/file/d/1A7imiyUqoMOcdEealDqfsdxY5SRkJgSp/view",
+      "https://drive.google.com/file/d/1s4HOpryevCIE1k-Pw4LX8RnekciNFwaA/view",
+      "https://drive.google.com/file/d/1SsS2hG5PynvFWzmlA6s8ecsZRPslkh7V/view"
+    ],
+    "qa_status": "approved",
+    "uploaded_at": "2026-03-13T19:58:00Z",
+    "qa_approved_at": "2026-03-13T19:58:01Z",
+    "qa_notes": "Auto pipeline test"
   },
   "delivery": {
-    "package_link": "",
-    "delivered": false,
-    "delivered_at": ""
+    "package_link": "https://drive.google.com/drive/folders/1H_r6drOI20Sf58SZ-r_ZOYurA9VR4XRL",
+    "delivered": true,
+    "delivered_at": "2026-03-13T19:58:01Z",
+    "notes": "Full auto pipeline test delivery"
   },
   "drive_job_folder": "https://drive.google.com/drive/folders/1ifD01WT-6iXUdFj7uGeOZe4jhYLTvrF8",
   "local_job_folder": "/kaggle/working/.openclaw/workspace/jobs/auto-test-001",
   "preview_folder": "https://drive.google.com/drive/folders/1g7QPABRW8lD2YFKt2VQ5GwPVAGwRiYQ5",
   "final_folder": "https://drive.google.com/drive/folders/1JmECky-kzmD2kmck5DvI6EHR0Mf7dnmS",
   "delivery_folder": "https://drive.google.com/drive/folders/1H_r6drOI20Sf58SZ-r_ZOYurA9VR4XRL",
-  "last_updated": "2026-03-13T19:56:27Z"
+  "last_updated": "2026-03-13T19:57:47Z"
 }

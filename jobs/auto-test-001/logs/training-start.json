@@ -1,0 +1,7 @@
+{
+  "event": "training_started",
+  "timestamp": "2026-03-13T19:57:48Z",
+  "model_type": "sdxl-lora",
+  "platform": "modal",
+  "run_id": "auto-test-001-run-001"
+}
