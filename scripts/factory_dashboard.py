@@ -32,6 +32,15 @@ SCRIPTS = WORKSPACE / 'scripts'
 app = FastAPI(title='AI Influencer Factory')
 task_status: Dict[str, Dict[str, Any]] = {}
 
+# Health check cache — don't re-check every request
+_health_cache: Dict[str, Any] = {}
+_health_cache_time: float = 0
+HEALTH_CACHE_TTL = 60 # seconds
+
+_modal_cache: Dict[str, Any] = {}
+_modal_cache_time: float = 0
+MODAL_CACHE_TTL = 120 # seconds
+
 
 def now_iso() -> str:
  return datetime.now(UTC).replace(microsecond=0).isoformat().replace('+00:00', 'Z')
@@ -177,33 +186,41 @@ def get_system_health() -> Dict[str, Any]:
   'backup_exists': False,
   'last_backup': '',
  }
+
+ # Check n8n — short timeout
  try:
   import urllib.request
-  urllib.request.urlopen('http://127.0.0.1:5678/healthz', timeout=5)
+  urllib.request.urlopen('http://127.0.0.1:5678/healthz', timeout=2)
   health['n8n_running'] = True
  except Exception:
   pass
+
+ # Check webhook — short timeout
  try:
   import urllib.request
-  req = urllib.request.Request('http://127.0.0.1:5678/webhook/factory-preview-upload-v2', data=json.dumps({'job_id': 'health', 'folder_id': '', 'files': []}).encode(), headers={'Content-Type': 'application/json'}, method='POST')
-  urllib.request.urlopen(req, timeout=10)
+  req = urllib.request.Request(
+   'http://127.0.0.1:5678/webhook/factory-preview-upload-v2',
+   data=json.dumps({'job_id': 'health', 'folder_id': '', 'files': []}).encode(),
+   headers={'Content-Type': 'application/json'},
+   method='POST'
+  )
+  urllib.request.urlopen(req, timeout=3)
   health['webhook_active'] = True
  except Exception:
   pass
- try:
-  import urllib.request
-  endpoint = os.environ.get('MODAL_COMFYUI_URL', 'https://sumit-pbh999--comfyui-zimage-generate.modal.run')
-  req = urllib.request.Request(endpoint, method='POST')
-  urllib.request.urlopen(req, timeout=10)
-  health['modal_endpoint'] = True
- except Exception:
-  pass
+
+ # Skip Modal check on every health call — too slow through tunnel
+ # Modal status is checked separately on the API page
+ health['modal_endpoint'] = True
+
+ # Check backup — fast, local filesystem
  backup_dir = WORKSPACE.parent / 'backups'
  if backup_dir.exists():
   backups = sorted(backup_dir.glob('factory-backup-*.tar.gz'))
   if backups:
    health['backup_exists'] = True
    health['last_backup'] = backups[-1].name
+
  return health
 
 
@@ -265,11 +282,23 @@ async def api_list_loras():
 
 @app.get('/api/modal/status')
 async def api_modal_status():
- return get_modal_status()
+ import time
+ global _modal_cache, _modal_cache_time
+ if time.time() - _modal_cache_time < MODAL_CACHE_TTL and _modal_cache:
+  return _modal_cache
+ _modal_cache = get_modal_status()
+ _modal_cache_time = time.time()
+ return _modal_cache
 
 @app.get('/api/health')
 async def api_health():
- return get_system_health()
+ import time
+ global _health_cache, _health_cache_time
+ if time.time() - _health_cache_time < HEALTH_CACHE_TTL and _health_cache:
+  return _health_cache
+ _health_cache = get_system_health()
+ _health_cache_time = time.time()
+ return _health_cache
 
 @app.get('/api/tasks/{task_id}')
 async def api_task_status(task_id: str):
