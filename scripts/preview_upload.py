@@ -6,6 +6,7 @@ import base64
 import json
 import mimetypes
 import os
+import shutil
 import subprocess
 import urllib.request
 from datetime import datetime, UTC
@@ -16,6 +17,7 @@ WORKSPACE = Path('/kaggle/working/.openclaw/workspace')
 JOBS_DIR = WORKSPACE / 'jobs'
 DEFAULT_WEBHOOK = os.environ.get('N8N_PREVIEW_UPLOAD_WEBHOOK', 'http://127.0.0.1:5678/webhook/factory-preview-upload-v2')
 IMAGE_EXTS = {'.png', '.jpg', '.jpeg', '.webp'}
+N8N_ALLOWED_FILES_DIR = Path('/root/.n8n-files')
 
 
 def now_iso() -> str:
@@ -87,10 +89,19 @@ def post_json(url: str, payload: Dict[str, Any]) -> Dict[str, Any]:
     return json.loads(text) if text.strip() else {}
 
 
+def stage_for_n8n(job_id: str, path: Path) -> Path:
+    staged_dir = N8N_ALLOWED_FILES_DIR / job_id
+    staged_dir.mkdir(parents=True, exist_ok=True)
+    staged_path = staged_dir / path.name
+    shutil.copy2(path, staged_path)
+    return staged_path
+
+
 def fallback_single_uploads(job_id: str, job: Dict[str, Any], files: List[Path], webhook_url: str) -> List[str]:
     drive_links: List[str] = []
     folder_id = infer_folder_id(job)
     for path in files:
+        staged = stage_for_n8n(job_id, path)
         payload = {
             'job_id': job_id,
             'asset_id': f'{job_id}:{path.stem}',
@@ -98,7 +109,7 @@ def fallback_single_uploads(job_id: str, job: Dict[str, Any], files: List[Path],
             'asset_type': 'image',
             'drive_folder_id': folder_id,
             'drive_folder_link': job.get('preview_folder', ''),
-            'local_file_path': str(path),
+            'local_file_path': str(staged),
             'file_name': path.name,
             'notes': 'preview upload via preview_upload.py',
             'created_at': now_iso(),
