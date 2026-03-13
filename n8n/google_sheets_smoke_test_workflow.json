@@ -1,0 +1,182 @@
+{
+  "id": "44444444-4444-4444-8444-444444444444",
+  "name": "Google Sheets Smoke Test",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "Manual_Trigger",
+      "name": "When clicking ‘Execute workflow’",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [220, 300]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "sheet",
+        "operation": "read",
+        "documentId": {
+          "mode": "id",
+          "value": "1Mb_XYkrwjwNPACMN-nMRbUpmXZ_uKaQ8SoyQFueyGbM"
+        },
+        "sheetName": {
+          "mode": "url",
+          "value": "https://docs.google.com/spreadsheets/d/1Mb_XYkrwjwNPACMN-nMRbUpmXZ_uKaQ8SoyQFueyGbM/edit#gid=1500221221"
+        },
+        "filtersUI": {},
+        "combineFilters": "AND",
+        "options": {},
+        "rawData": false
+      },
+      "id": "Google_Sheets_Read",
+      "name": "Google Sheets Read",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [480, 220],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VZZ9Q0UmIA6V99oH",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "name": "job_id",
+              "value": "SHEETS-SMOKE-TEST",
+              "type": "string"
+            },
+            {
+              "name": "asset_id",
+              "value": "sheets-smoke-test-row",
+              "type": "string"
+            },
+            {
+              "name": "stage",
+              "value": "smoke_test",
+              "type": "string"
+            },
+            {
+              "name": "asset_type",
+              "value": "text",
+              "type": "string"
+            },
+            {
+              "name": "file_name",
+              "value": "n8n-sheets-smoke-test.txt",
+              "type": "string"
+            },
+            {
+              "name": "file_path",
+              "value": "/root/.n8n-files/test-upload.txt",
+              "type": "string"
+            },
+            {
+              "name": "drive_link",
+              "value": "smoke-test",
+              "type": "string"
+            },
+            {
+              "name": "approved",
+              "value": "false",
+              "type": "string"
+            },
+            {
+              "name": "selected_for_delivery",
+              "value": "false",
+              "type": "string"
+            },
+            {
+              "name": "created_at",
+              "value": "={{$now}}",
+              "type": "string"
+            },
+            {
+              "name": "notes",
+              "value": "n8n Google Sheets smoke test",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "Build_Test_Row",
+      "name": "Build Test Row",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [740, 220]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "sheet",
+        "operation": "append",
+        "documentId": {
+          "mode": "id",
+          "value": "1Mb_XYkrwjwNPACMN-nMRbUpmXZ_uKaQ8SoyQFueyGbM"
+        },
+        "sheetName": {
+          "mode": "url",
+          "value": "https://docs.google.com/spreadsheets/d/1Mb_XYkrwjwNPACMN-nMRbUpmXZ_uKaQ8SoyQFueyGbM/edit#gid=1500221221"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": null
+        },
+        "options": {}
+      },
+      "id": "Append_Test_Row",
+      "name": "Append Test Row",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [1000, 220],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VZZ9Q0UmIA6V99oH",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets Read",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets Read": {
+      "main": [
+        [
+          {
+            "node": "Build Test Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Test Row": {
+      "main": [
+        [
+          {
+            "node": "Append Test Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {},
+  "versionId": "44444444-4444-4444-8444-444444444445"
+}
