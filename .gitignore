@@ -20,3 +20,4 @@ state/openclaw.json.local-backup
 ../root-openclaw-backup/
 ../runtime-backups/
 ../root-openclaw-live/
+../root-n8n-live/

@@ -7,6 +7,7 @@ CRED_DIR="$PERSIST_DIR/credentials"
 RUNTIME_BACKUP_DIR="$PERSIST_DIR/runtime-backups"
 ROOT_BACKUP_DIR="$PERSIST_DIR/root-openclaw-backup"
 PERSIST_RUNTIME_DIR="$PERSIST_DIR/root-openclaw-live"
+PERSIST_N8N_DIR="$PERSIST_DIR/root-n8n-live"
 WORKSPACE_DIR="/kaggle/working/.openclaw/workspace"
 LOG_GATEWAY="/kaggle/working/openclaw_gateway.log"
 LOG_N8N="/kaggle/working/n8n.log"
@@ -116,6 +117,35 @@ setup_persistent_root_symlink() {
     ok "Symlinked /root/.openclaw -> $PERSIST_RUNTIME_DIR"
 }
 
+setup_persistent_n8n_symlink() {
+    mkdir -p "$PERSIST_N8N_DIR"
+
+    if [ -L /root/.n8n ]; then
+        current_target="$(readlink -f /root/.n8n || true)"
+        desired_target="$(readlink -f "$PERSIST_N8N_DIR" || true)"
+        if [ "$current_target" = "$desired_target" ]; then
+            ok "/root/.n8n already symlinked to persistent storage"
+            return 0
+        fi
+        rm -f /root/.n8n
+    fi
+
+    if [ -d /root/.n8n ] && [ ! -L /root/.n8n ]; then
+        if [ -z "$(find "$PERSIST_N8N_DIR" -mindepth 1 -maxdepth 1 2>/dev/null | head -1)" ]; then
+            info "Migrating existing /root/.n8n into persistent storage"
+            rsync -a /root/.n8n/ "$PERSIST_N8N_DIR/"
+        else
+            info "Persistent n8n state already exists; merging missing files from /root/.n8n"
+            rsync -a --ignore-existing /root/.n8n/ "$PERSIST_N8N_DIR/"
+        fi
+        rm -rf /root/.n8n
+    fi
+
+    mkdir -p /root
+    ln -s "$PERSIST_N8N_DIR" /root/.n8n
+    ok "Symlinked /root/.n8n -> $PERSIST_N8N_DIR"
+}
+
 trap 'warn "Quickstart failed near line $LINENO. Check logs: $LOG_GATEWAY $LOG_N8N $LOG_VSCODE"' ERR
 
 info "============================================="
@@ -124,7 +154,7 @@ info "============================================="
 
 # 1. Load secrets
 info "--- 1. Loading Kaggle Secrets ---"
-mkdir -p "$CRED_DIR" "$RUNTIME_BACKUP_DIR" "$ROOT_BACKUP_DIR" "$PERSIST_RUNTIME_DIR"
+mkdir -p "$CRED_DIR" "$RUNTIME_BACKUP_DIR" "$ROOT_BACKUP_DIR" "$PERSIST_RUNTIME_DIR" "$PERSIST_N8N_DIR"
 python3 - <<'PY'
 from kaggle_secrets import UserSecretsClient
 s = UserSecretsClient()
@@ -149,6 +179,8 @@ print(f'✅ Secrets: {found}/{len(keys)} loaded')
 PY
 source "$CRED_DIR/openclaw-secrets.env"
 
+export N8N_USER_FOLDER="$PERSIST_N8N_DIR"
+
 if [ -n "${N8N_PUBLIC_URL:-}" ]; then
     export WEBHOOK_URL="$N8N_PUBLIC_URL"
     export N8N_EDITOR_BASE_URL="$N8N_PUBLIC_URL"
@@ -159,6 +191,7 @@ if [ -n "${N8N_PUBLIC_URL:-}" ]; then
 else
     warn "N8N_PUBLIC_URL not set — n8n OAuth callbacks will default to localhost"
 fi
+ok "Using persistent N8N_USER_FOLDER: $N8N_USER_FOLDER"
 
 # 2. Node
 info "--- 2. Node.js ---"
@@ -200,8 +233,12 @@ fi
 info "--- 5. Persistent /root/.openclaw Symlink ---"
 setup_persistent_root_symlink
 
-# 6. Restore config
-info "--- 6. OpenClaw Config ---"
+# 6. Persistent n8n symlink
+info "--- 6. Persistent /root/.n8n Symlink ---"
+setup_persistent_n8n_symlink
+
+# 7. Restore config
+info "--- 7. OpenClaw Config ---"
 mkdir -p /root/.openclaw
 if [ -f "$PERSIST_DIR/openclaw.json.bak" ]; then
     cp "$PERSIST_DIR/openclaw.json.bak" /root/.openclaw/openclaw.json
@@ -210,8 +247,8 @@ else
     fail "No config backup at $PERSIST_DIR/openclaw.json.bak — run rebuild.sh first"
 fi
 
-# 7. Agent directories + runtime backups
-info "--- 7. Agent Directories & Runtime State ---"
+# 8. Agent directories + runtime backups
+info "--- 8. Agent Directories & Runtime State ---"
 for agent in "${AGENTS[@]}"; do
     mkdir -p "/root/.openclaw/agents/${agent}/agent"
     mkdir -p "/root/.openclaw/agents/${agent}/sessions"
@@ -220,8 +257,8 @@ restore_runtime_state
 ok "Agent directories restored"
 ok "Runtime auth/device state restored when available"
 
-# 8. Git
-info "--- 8. Git ---"
+# 9. Git
+info "--- 9. Git ---"
 git config --global user.email "$GIT_AUTHOR_EMAIL"
 git config --global user.name "$GIT_AUTHOR_NAME"
 cd "$WORKSPACE_DIR"
@@ -234,8 +271,8 @@ else
 fi
 ok "Git configured"
 
-# 9. Kill old processes
-info "--- 9. Cleanup ---"
+# 10. Kill old processes
+info "--- 10. Cleanup ---"
 pkill -f "openclaw gateway" 2>/dev/null || true
 pkill -f "n8n" 2>/dev/null || true
 pkill -f "code tunnel" 2>/dev/null || true
@@ -243,24 +280,32 @@ pkill -f "scripts/autopush.sh" 2>/dev/null || true
 sleep 2
 ok "Old processes cleaned"
 
-# 10. Gateway
-info "--- 10. Gateway ---"
+# 11. Gateway
+info "--- 11. Gateway ---"
 rm -f "$LOG_GATEWAY"
 nohup openclaw gateway --port 18789 > "$LOG_GATEWAY" 2>&1 &
-sleep 8
-if ! pgrep -f "openclaw gateway" > /dev/null; then
-    tail -50 "$LOG_GATEWAY" || true
-    fail "Gateway failed to start"
-fi
-if ! openclaw health > /tmp/openclaw_health.out 2>&1; then
-    tail -50 "$LOG_GATEWAY" || true
-    cat /tmp/openclaw_health.out || true
-    fail "Gateway process exists but health check failed"
+
+GATEWAY_OK=0
+for attempt in 1 2 3 4 5 6; do
+    sleep 5
+    if ss -ltn | grep -q ':18789'; then
+        if openclaw health > /tmp/openclaw_health.out 2>&1; then
+            GATEWAY_OK=1
+            break
+        fi
+    fi
+    info "Gateway warmup attempt $attempt/6..."
+done
+
+if [ "$GATEWAY_OK" != "1" ]; then
+    tail -80 "$LOG_GATEWAY" || true
+    cat /tmp/openclaw_health.out 2>/dev/null || true
+    fail "Gateway failed to become healthy"
 fi
 ok "Gateway running and healthy"
 
-# 11. n8n
-info "--- 11. n8n ---"
+# 12. n8n
+info "--- 12. n8n ---"
 rm -f "$LOG_N8N"
 nohup "${N8N_BIN:-/usr/lib/node_modules/n8n/bin/n8n}" start > "$LOG_N8N" 2>&1 &
 sleep 8
@@ -271,8 +316,8 @@ else
     fail "n8n failed to start"
 fi
 
-# 12. VS Code
-info "--- 12. VS Code Tunnel ---"
+# 13. VS Code
+info "--- 13. VS Code Tunnel ---"
 if [ -f "/kaggle/working/.vscode/code" ]; then
     rm -f "$LOG_VSCODE"
     nohup /kaggle/working/.vscode/code tunnel --accept-server-license-terms --name openclaw-kaggle > "$LOG_VSCODE" 2>&1 &
@@ -282,8 +327,8 @@ else
     warn "VS Code CLI missing"
 fi
 
-# 13. Autopush
-info "--- 13. Autopush ---"
+# 14. Autopush
+info "--- 14. Autopush ---"
 nohup bash -c '
 while true; do
   bash /kaggle/working/.openclaw/workspace/scripts/autopush.sh >> /kaggle/working/autopush.log 2>&1
@@ -292,14 +337,14 @@ done
 ' > /dev/null 2>&1 &
 ok "Autopush every 60s"
 
-# 14. Persist runtime state for next Kaggle restart
-info "--- 14. Persist Runtime State ---"
+# 15. Persist runtime state for next Kaggle restart
+info "--- 15. Persist Runtime State ---"
 backup_runtime_state
 snapshot_root_openclaw
 ok "Config/auth/device state backed up to persistent storage"
 ok "Compact /root/.openclaw snapshot saved to $ROOT_BACKUP_DIR"
 
-# 15. Verify
+# 16. Verify
 info ""
 info "============================================="
 info "  VERIFICATION"

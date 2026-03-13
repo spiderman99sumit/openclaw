@@ -23,6 +23,7 @@ import datetime as dt
 import json
 import mimetypes
 import os
+import shutil
 import sys
 from dataclasses import dataclass
 from pathlib import Path
@@ -42,6 +43,7 @@ except Exception as e:  # pragma: no cover
 
 WORKSPACE = Path("/kaggle/working/.openclaw/workspace")
 CREDENTIALS_PATH = Path("/kaggle/working/.openclaw/credentials/sa-gdrive.json")
+N8N_ALLOWED_FILES_DIR = Path("/root/.n8n-files")
 DEFAULT_SHEET_ID = "1Mb_XYkrwjwNPACMN-nMRbUpmXZ_uKaQ8SoyQFueyGbM"
 DEFAULT_DRIVE_ROOT_ID = "1v4Kc4c5dYeTQF2MVpIoac3hzt0WFJrnI"
 
@@ -390,15 +392,19 @@ def prepare_n8n_upload_payload(
     save_json(job_json, job_record)
     client.update_job_row(job_record)
 
+    asset_id = asset_id or f"{job_id}:{file_path.stem}"
+    staged_path = stage_file_for_n8n(job_id, file_path, asset_id)
+
     payload = {
         "job_id": job_id,
-        "asset_id": asset_id or f"{job_id}:{file_path.stem}",
+        "asset_id": asset_id,
         "stage": "preview",
         "asset_type": "image",
         "persona_folder": drive_data["job_folder"]["name"],
         "drive_folder_id": preview_folder["id"],
         "drive_folder_link": preview_folder.get("webViewLink", ""),
-        "local_file_path": str(file_path),
+        "local_file_path": str(staged_path),
+        "source_file_path": str(file_path),
         "file_name": file_name or file_path.name,
         "notes": notes,
         "created_at": now_iso(),
@@ -408,6 +414,15 @@ def prepare_n8n_upload_payload(
         out_path = job_dir(job_id) / "metadata" / f"upload-payload-{payload['asset_id'].replace('/', '_').replace(':', '-')}.json"
     save_json(out_path, payload)
     return {"payload": payload, "payload_path": str(out_path)}
+
+
+def stage_file_for_n8n(job_id: str, file_path: Path, asset_id: str) -> Path:
+    staged_dir = N8N_ALLOWED_FILES_DIR / job_id
+    staged_dir.mkdir(parents=True, exist_ok=True)
+    safe_name = f"{asset_id.replace('/', '_').replace(':', '-')}-{file_path.name}"
+    staged_path = staged_dir / safe_name
+    shutil.copy2(file_path, staged_path)
+    return staged_path
 
 
 def build_parser() -> argparse.ArgumentParser:

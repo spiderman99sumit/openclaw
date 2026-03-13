@@ -4,7 +4,7 @@
     {
       "parameters": {
         "httpMethod": "POST",
-        "path": "factory-preview-upload",
+        "path": "factory-preview-upload-v2",
         "responseMode": "responseNode",
         "options": {}
       },
@@ -16,7 +16,7 @@
         240,
         300
       ],
-      "webhookId": "factory-preview-upload"
+      "webhookId": "factory-preview-upload-v2"
     },
     {
       "parameters": {
@@ -77,13 +77,27 @@
     },
     {
       "parameters": {
+        "filePath": "={{$json.local_file_path}}",
+        "dataPropertyName": "data"
+      },
+      "id": "Read_Binary_File",
+      "name": "Read Binary File",
+      "type": "n8n-nodes-base.readBinaryFile",
+      "typeVersion": 1,
+      "position": [
+        700,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "file",
         "operation": "upload",
-        "binaryData": false,
-        "fileContent": "={{$json.local_file_path}}",
+        "inputDataFieldName": "data",
         "name": "={{$json.file_name}}",
-        "parents": [
-          "={{$json.drive_folder_id}}"
-        ],
+        "driveId": "root",
+        "folderId": "={{$json.drive_folder_id}}",
         "options": {}
       },
       "id": "Google_Drive_Upload",
@@ -96,7 +110,7 @@
       ],
       "credentials": {
         "googleDriveOAuth2Api": {
-          "id": "ZLI8RHLiKnEmqvhW",
+          "id": "OF8XOSO6ObhXJMmA",
           "name": "Google Drive account"
         }
       }
@@ -175,11 +189,19 @@
     },
     {
       "parameters": {
+        "resource": "sheet",
         "operation": "append",
-        "documentId": "1Mb_XYkrwjwNPACMN-nMRbUpmXZ_uKaQ8SoyQFueyGbM",
-        "sheetName": "Assets",
+        "documentId": {
+          "mode": "id",
+          "value": "1Mb_XYkrwjwNPACMN-nMRbUpmXZ_uKaQ8SoyQFueyGbM"
+        },
+        "sheetName": {
+          "mode": "url",
+          "value": "https://docs.google.com/spreadsheets/d/1Mb_XYkrwjwNPACMN-nMRbUpmXZ_uKaQ8SoyQFueyGbM/edit#gid=1500221221"
+        },
         "columns": {
-          "mappingMode": "autoMapInputData"
+          "mappingMode": "autoMapInputData",
+          "value": null
         },
         "options": {}
       },
@@ -193,7 +215,7 @@
       ],
       "credentials": {
         "googleSheetsOAuth2Api": {
-          "id": "m8byFknpICqtcSus",
+          "id": "9fRwRJHQKe4GnAJg",
           "name": "Google Sheets account"
         }
       }
@@ -230,6 +252,17 @@
       "main": [
         [
           {
+            "node": "Read Binary File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Binary File": {
+      "main": [
+        [
+          {
             "node": "Google Drive Upload",
             "type": "main",
             "index": 0
@@ -249,17 +282,6 @@
       ]
     },
     "Build Asset Row": {
-      "main": [
-        [
-          {
-            "node": "Append Assets Row",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Append Assets Row": {
       "main": [
         [
           {

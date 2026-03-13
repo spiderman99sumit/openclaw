@@ -1,13 +1,12 @@
 {
   "meta": {
-    "lastTouchedVersion": "2026.3.11",
-    "lastTouchedAt": "2026-03-12T21:27:31.838Z"
+    "lastTouchedVersion": "2026.3.8",
+    "lastTouchedAt": "2026-03-12T14:40:11.000Z"
   },
   "wizard": {
-    "lastRunAt": "2026-03-12T21:27:31.807Z",
-    "lastRunVersion": "2026.3.11",
-    "lastRunCommit": "eb7204008d3d05708dd06d89dadb58c3aa4eb07c",
-    "lastRunCommand": "configure",
+    "lastRunAt": "2026-03-12T14:40:11.000Z",
+    "lastRunVersion": "2026.3.8",
+    "lastRunCommand": "onboard",
     "lastRunMode": "local"
   },
   "auth": {
@@ -22,9 +21,6 @@
     "defaults": {
       "model": {
         "primary": "openai-codex/gpt-5.4"
-      },
-      "models": {
-        "openai-codex/gpt-5.4": {}
       },
       "workspace": "/kaggle/working/.openclaw/workspace",
       "compaction": {
@@ -347,18 +343,10 @@
     "port": 18789,
     "mode": "local",
     "bind": "loopback",
-    "controlUi": {
-      "allowedOrigins": [
-        "http://localhost:18789"
-      ]
-    },
     "auth": {
       "mode": "token",
       "token": "REDACTED"
     },
-    "trustedProxies": [
-      "127.0.0.1"
-    ],
     "tailscale": {
       "mode": "off",
       "resetOnExit": false

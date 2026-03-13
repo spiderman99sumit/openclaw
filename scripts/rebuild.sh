@@ -6,6 +6,7 @@ PERSIST_DIR="/kaggle/working/.openclaw"
 CRED_DIR="$PERSIST_DIR/credentials"
 WORKSPACE_DIR="$PERSIST_DIR/workspace"
 PERSIST_RUNTIME_DIR="$PERSIST_DIR/root-openclaw-live"
+PERSIST_N8N_DIR="$PERSIST_DIR/root-n8n-live"
 RUNTIME_BACKUP_DIR="$PERSIST_DIR/runtime-backups"
 ROOT_BACKUP_DIR="$PERSIST_DIR/root-openclaw-backup"
 
@@ -43,6 +44,35 @@ setup_persistent_root_symlink() {
     ok "Symlinked /root/.openclaw -> $PERSIST_RUNTIME_DIR"
 }
 
+setup_persistent_n8n_symlink() {
+    mkdir -p "$PERSIST_N8N_DIR"
+
+    if [ -L /root/.n8n ]; then
+        current_target="$(readlink -f /root/.n8n || true)"
+        desired_target="$(readlink -f "$PERSIST_N8N_DIR" || true)"
+        if [ "$current_target" = "$desired_target" ]; then
+            ok "/root/.n8n already symlinked to persistent storage"
+            return 0
+        fi
+        rm -f /root/.n8n
+    fi
+
+    if [ -d /root/.n8n ] && [ ! -L /root/.n8n ]; then
+        if [ -z "$(find "$PERSIST_N8N_DIR" -mindepth 1 -maxdepth 1 2>/dev/null | head -1)" ]; then
+            info "Migrating existing /root/.n8n into persistent storage"
+            rsync -a /root/.n8n/ "$PERSIST_N8N_DIR/"
+        else
+            info "Persistent n8n state already exists; merging missing files from /root/.n8n"
+            rsync -a --ignore-existing /root/.n8n/ "$PERSIST_N8N_DIR/"
+        fi
+        rm -rf /root/.n8n
+    fi
+
+    mkdir -p /root
+    ln -s "$PERSIST_N8N_DIR" /root/.n8n
+    ok "Symlinked /root/.n8n -> $PERSIST_N8N_DIR"
+}
+
 info "============================================="
 info "  FULL REBUILD — From Scratch"
 info "============================================="
@@ -53,6 +83,7 @@ mkdir -p "$CRED_DIR"
 mkdir -p "$WORKSPACE_DIR"
 mkdir -p /kaggle/working/.vscode
 mkdir -p "$PERSIST_RUNTIME_DIR"
+mkdir -p "$PERSIST_N8N_DIR"
 mkdir -p "$RUNTIME_BACKUP_DIR"
 mkdir -p "$ROOT_BACKUP_DIR"
 ok "Directories created"
@@ -83,6 +114,8 @@ print(f'✅ Secrets: {found}/{len(keys)} loaded')
 PY
 source "$CRED_DIR/openclaw-secrets.env"
 
+export N8N_USER_FOLDER="$PERSIST_N8N_DIR"
+
 if [ -n "${N8N_PUBLIC_URL:-}" ]; then
     export WEBHOOK_URL="$N8N_PUBLIC_URL"
     export N8N_EDITOR_BASE_URL="$N8N_PUBLIC_URL"
@@ -93,6 +126,7 @@ if [ -n "${N8N_PUBLIC_URL:-}" ]; then
 else
     warn "N8N_PUBLIC_URL not set — n8n OAuth callbacks will default to localhost"
 fi
+ok "Using persistent N8N_USER_FOLDER: $N8N_USER_FOLDER"
 
 # 3. Node 22
 info "--- 3. Node 22 ---"
@@ -116,8 +150,12 @@ ok "n8n installed"
 info "--- 6. Persistent /root/.openclaw Symlink ---"
 setup_persistent_root_symlink
 
-# 7. GitHub clone/update
-info "--- 7. GitHub ---"
+# 7. Persistent n8n symlink
+info "--- 7. Persistent /root/.n8n Symlink ---"
+setup_persistent_n8n_symlink
+
+# 8. GitHub clone/update
+info "--- 8. GitHub ---"
 git config --global user.email "$GIT_AUTHOR_EMAIL"
 git config --global user.name "$GIT_AUTHOR_NAME"
 cd "$PERSIST_DIR"
@@ -135,8 +173,8 @@ else
     ok "Workspace cloned"
 fi
 
-# 8. Agent workspaces
-info "--- 8. Agent Workspaces ---"
+# 9. Agent workspaces
+info "--- 9. Agent Workspaces ---"
 for agent in manager maya jordan sam creative-lab prompt-engineer ops-guardian watchdog validator recovery n8n-worker; do
     mkdir -p "/kaggle/working/.openclaw/workspace-${agent}"
     mkdir -p "/root/.openclaw/agents/${agent}/agent"
@@ -152,8 +190,8 @@ done
 mkdir -p /root/.openclaw/agents/main/agent /root/.openclaw/agents/main/sessions
 ok "All agent workspaces created"
 
-# 9. VS Code CLI
-info "--- 9. VS Code CLI ---"
+# 10. VS Code CLI
+info "--- 10. VS Code CLI ---"
 cd /kaggle/working/.vscode
 if [ ! -f "./code" ]; then
     curl -fsSL "https://code.visualstudio.com/sha/download?build=stable&os=cli-alpine-x64" -o vscode_cli.tar.gz
@@ -164,8 +202,8 @@ else
     ok "VS Code CLI exists"
 fi
 
-# 10. Service account
-info "--- 10. Service Account ---"
+# 11. Service account
+info "--- 11. Service Account ---"
 python3 - <<'PY'
 from kaggle_secrets import UserSecretsClient
 try:
@@ -177,8 +215,8 @@ except Exception:
     print('⚠️ SA_GDRIVE_JSON not in secrets — upload manually')
 PY
 
-# 11. OpenClaw config
-info "--- 11. OpenClaw Config ---"
+# 12. OpenClaw config
+info "--- 12. OpenClaw Config ---"
 if [ -f "$PERSIST_DIR/openclaw.json.bak" ]; then
     cp "$PERSIST_DIR/openclaw.json.bak" /root/.openclaw/openclaw.json
     ok "Config restored from backup"

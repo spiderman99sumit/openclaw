@@ -6,8 +6,9 @@
   "persona_folder": "Lena Hart - JOB-20260312-001",
   "drive_folder_id": "1qwRq2wsTNMlbNzEpdg4xeWJ0_TI8UsRO",
   "drive_folder_link": "https://drive.google.com/drive/folders/1qwRq2wsTNMlbNzEpdg4xeWJ0_TI8UsRO",
-  "local_file_path": "/kaggle/working/.openclaw/workspace/jobs/JOB-20260312-001/previews/placeholder-preview-001.png",
+  "local_file_path": "/root/.n8n-files/JOB-20260312-001/JOB-20260312-001-placeholder-001-placeholder-preview-001.png",
+  "source_file_path": "/kaggle/working/.openclaw/workspace/jobs/JOB-20260312-001/previews/placeholder-preview-001.png",
   "file_name": "placeholder-preview-001.png",
-  "notes": "preview upload via n8n",
-  "created_at": "2026-03-12T23:06:06Z"
+  "notes": "preview upload via persistent n8n staged-file test",
+  "created_at": "2026-03-13T02:59:56Z"
 }

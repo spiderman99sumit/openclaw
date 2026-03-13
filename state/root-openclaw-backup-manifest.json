@@ -1,1 +1,110 @@
-[]
+[
+  {
+    "path": "agents/creative-lab/agent/auth-profiles.json",
+    "size": 2238
+  },
+  {
+    "path": "agents/jordan/agent/auth-profiles.json",
+    "size": 2238
+  },
+  {
+    "path": "agents/main/agent/auth-profiles.json",
+    "size": 2352
+  },
+  {
+    "path": "agents/main/agent/models.json",
+    "size": 163
+  },
+  {
+    "path": "agents/main/sessions/31371d56-cc51-4e67-b023-b60b73a2cb8d.jsonl",
+    "size": 86565
+  },
+  {
+    "path": "agents/main/sessions/d13831cf-3e85-491f-9f3c-2692b3df7467.jsonl.reset.2026-03-13T06-36-12.829Z",
+    "size": 4614790
+  },
+  {
+    "path": "agents/main/sessions/sessions.json",
+    "size": 18611
+  },
+  {
+    "path": "agents/manager/agent/auth-profiles.json",
+    "size": 2238
+  },
+  {
+    "path": "agents/maya/agent/auth-profiles.json",
+    "size": 2238
+  },
+  {
+    "path": "agents/n8n-worker/agent/auth-profiles.json",
+    "size": 2238
+  },
+  {
+    "path": "agents/ops-guardian/agent/auth-profiles.json",
+    "size": 2238
+  },
+  {
+    "path": "agents/prompt-engineer/agent/auth-profiles.json",
+    "size": 2238
+  },
+  {
+    "path": "agents/recovery/agent/auth-profiles.json",
+    "size": 2238
+  },
+  {
+    "path": "agents/sam/agent/auth-profiles.json",
+    "size": 2238
+  },
+  {
+    "path": "agents/validator/agent/auth-profiles.json",
+    "size": 2238
+  },
+  {
+    "path": "agents/watchdog/agent/auth-profiles.json",
+    "size": 2238
+  },
+  {
+    "path": "cron/jobs.json",
+    "size": 32
+  },
+  {
+    "path": "devices/paired.json",
+    "size": 2130
+  },
+  {
+    "path": "devices/pending.json",
+    "size": 2
+  },
+  {
+    "path": "identity/device-auth.json",
+    "size": 428
+  },
+  {
+    "path": "identity/device.json",
+    "size": 416
+  },
+  {
+    "path": "openclaw.json",
+    "size": 8123
+  },
+  {
+    "path": "openclaw.json.bak",
+    "size": 9082
+  },
+  {
+    "path": "openclaw.json.bak.1",
+    "size": 9082
+  },
+  {
+    "path": "openclaw.json.bak.2",
+    "size": 9033
+  },
+  {
+    "path": "openclaw.json.bak.3",
+    "size": 8123
+  },
+  {
+    "path": "openclaw.json.bak.4",
+    "size": 9033
+  }
+]
