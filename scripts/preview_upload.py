@@ -123,13 +123,24 @@ def fallback_single_uploads(job_id: str, job: Dict[str, Any], files: List[Path],
 
 
 def update_sheet_row(job_id: str) -> None:
-    subprocess.run(
-        ['python', str(WORKSPACE / 'scripts' / 'factory_drive_sync.py'), 'update-job-status', job_id, '--status', 'preview_review'],
-        cwd=str(WORKSPACE),
-        check=True,
-        capture_output=True,
-        text=True,
-    )
+    try:
+        subprocess.run(
+            [
+                'python',
+                str(WORKSPACE / 'scripts' / 'factory_drive_sync.py'),
+                'update-job-status',
+                job_id,
+                'preview_review'
+            ],
+            cwd=str(WORKSPACE),
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+    except subprocess.CalledProcessError as e:
+        print(f'Warning: Sheets sync failed: {e.stderr}')
+    except FileNotFoundError:
+        print('Warning: factory_drive_sync.py not found, skipping Sheets update')
 
 
 def main() -> int:

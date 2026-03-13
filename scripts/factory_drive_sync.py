@@ -462,11 +462,15 @@ def build_parser() -> argparse.ArgumentParser:
 
     j = sub.add_parser("update-job-status")
     j.add_argument("job_id")
-    j.add_argument("status")
+    j.add_argument("new_status", nargs="?", default=None)
+    j.add_argument("--status", dest="status_flag", default=None)
     j.add_argument("--notes")
     j.add_argument("--extra-json")
     j.add_argument("--sheet-id", default=DEFAULT_SHEET_ID)
     j.add_argument("--drive-root-id", default=DEFAULT_DRIVE_ROOT_ID)
+
+    g = sub.add_parser("get-job-status")
+    g.add_argument("job_id")
 
     n = sub.add_parser("prepare-n8n-upload")
     n.add_argument("job_id")
@@ -502,8 +506,16 @@ def main() -> int:
             folder_name=args.folder_name,
         )
     elif args.cmd == "update-job-status":
+        status_value = args.status_flag or args.new_status
+        if not status_value:
+            print("Error: no status provided", file=sys.stderr)
+            return 1
         extra = json.loads(args.extra_json) if args.extra_json else None
-        result = update_job_status(client, args.job_id, status=args.status, notes=args.notes, extra=extra)
+        result = update_job_status(client, args.job_id, status=status_value, notes=args.notes, extra=extra)
+    elif args.cmd == "get-job-status":
+        path = job_dir(args.job_id) / "metadata" / "job.json"
+        record = load_json(path, {"job_id": args.job_id})
+        result = {"job_id": args.job_id, "status": record.get("status"), "updated_at": record.get("updated_at"), "preview": record.get("preview", {})}
     elif args.cmd == "prepare-n8n-upload":
         result = prepare_n8n_upload_payload(
             client,
