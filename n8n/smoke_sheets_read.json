@@ -1,0 +1,62 @@
+[
+  {
+    "id": "22222222-2222-4222-8222-222222222222",
+    "name": "Smoke Test - Google Sheets Read",
+    "nodes": [
+      {
+        "parameters": {},
+        "id": "manual_trigger",
+        "name": "When clicking ‘Execute workflow’",
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [260, 300]
+      },
+      {
+        "parameters": {
+          "authentication": "oAuth2",
+          "resource": "sheet",
+          "operation": "read",
+          "documentId": {
+            "mode": "id",
+            "value": "1Mb_XYkrwjwNPACMN-nMRbUpmXZ_uKaQ8SoyQFueyGbM"
+          },
+          "sheetName": {
+            "mode": "url",
+            "value": "https://docs.google.com/spreadsheets/d/1Mb_XYkrwjwNPACMN-nMRbUpmXZ_uKaQ8SoyQFueyGbM/edit#gid=1500221221"
+          },
+          "filtersUI": {},
+          "combineFilters": "AND",
+          "options": {},
+          "rawData": false
+        },
+        "id": "google_sheets_read",
+        "name": "Google Sheets Read",
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.5,
+        "position": [560, 300],
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "9fRwRJHQKe4GnAJg",
+            "name": "Google Sheets account"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "When clicking ‘Execute workflow’": {
+        "main": [
+          [
+            {
+              "node": "Google Sheets Read",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "active": false,
+    "settings": {},
+    "versionId": "smoke-sheets-read-v1"
+  }
+]

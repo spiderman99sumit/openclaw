@@ -1,0 +1,54 @@
+[
+  {
+    "id": "11111111-1111-4111-8111-111111111111",
+    "name": "Smoke Test - Google Drive List",
+    "nodes": [
+      {
+        "parameters": {},
+        "id": "manual_trigger",
+        "name": "When clicking ‘Execute workflow’",
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [260, 300]
+      },
+      {
+        "parameters": {
+          "authentication": "oAuth2",
+          "resource": "file",
+          "operation": "list",
+          "useQueryString": false,
+          "limit": 1,
+          "queryFilters": {},
+          "options": {}
+        },
+        "id": "google_drive_list",
+        "name": "Google Drive List",
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [560, 300],
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "OF8XOSO6ObhXJMmA",
+            "name": "Google Drive account"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "When clicking ‘Execute workflow’": {
+        "main": [
+          [
+            {
+              "node": "Google Drive List",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "active": false,
+    "settings": {},
+    "versionId": "smoke-drive-list-v1"
+  }
+]
