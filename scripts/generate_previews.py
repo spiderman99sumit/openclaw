@@ -125,6 +125,16 @@ def generate_preview_batch(
  previews_dir = JOBS_DIR / job_id / 'previews'
  previews_dir.mkdir(parents=True, exist_ok=True)
 
+ # If no prompts specified, try to load from job's generated prompts
+ if prompts is None:
+  generated_prompts_file = JOBS_DIR / job_id / 'intake' / 'generated-prompts.json'
+  if generated_prompts_file.exists():
+   prompt_data = load_json(generated_prompts_file)
+   all_prompts = prompt_data.get('prompts', [])
+   if all_prompts:
+    prompts = all_prompts[:count]
+    print(f'Using {len(prompts)} prompts from {generated_prompts_file}')
+
  if prompts is None:
   prompts = PREVIEW_PROMPTS[:count]
 

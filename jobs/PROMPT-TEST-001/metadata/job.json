@@ -1,0 +1,54 @@
+{
+  "job_id": "PROMPT-TEST-001",
+  "client_name": "PromptTestClient",
+  "persona_name": "FitnessInfluencer",
+  "status": "new",
+  "created_at": "2026-03-13T22:25:10Z",
+  "updated_at": "2026-03-13T22:25:30Z",
+  "drive": {
+    "root_folder_id": "1K--9d2gsNDqfSUA9FpJnn05WbsFpQ9Fe",
+    "root_folder_link": "https://drive.google.com/drive/folders/1K--9d2gsNDqfSUA9FpJnn05WbsFpQ9Fe",
+    "subfolders": {
+      "intake": "1HG4Gt1SigxQkIPu7xrI9WQWUOMlNjulJ",
+      "references": "19E11Cz1IgU6DzVEfwQNArk39CabnQwil",
+      "dataset": "1dErZYt08pBp-Q5bBdI5pksrDTU6m0xdL",
+      "previews": "1_9-zlOkjbOIIBeAcvBCyoh0N8nBGKAkB",
+      "approvals": "1T-bEq5OzC62sprPMUxqAirvtyPhKgl_k",
+      "lora": "1oijRbGT_dcPI1KF8PaJ2jMHZRQQKx3BV",
+      "final_batches": "1KfieS-fcviGlvgL4gL5PX9SqW5B9_MhR",
+      "delivery": "1L5sCabM1R9_WTNr91VhQc6n_vAFQ3f-A",
+      "logs": "1OJJm0IwFpwyKnWTFYG4V7eoBAW5sKIpv",
+      "metadata": "1qkvc3WH5Nl6dip8ddZtzJdl9f-SZrKCd"
+    }
+  },
+  "preview": {
+    "assets": [],
+    "drive_links": [],
+    "uploaded": false,
+    "uploaded_at": "",
+    "review_status": "pending"
+  },
+  "training": {
+    "model_type": "",
+    "platform": "",
+    "run_id": "",
+    "checkpoint_path": "",
+    "status": "not_started"
+  },
+  "final_batch": {
+    "assets": [],
+    "drive_links": [],
+    "qa_status": "pending"
+  },
+  "delivery": {
+    "package_link": "",
+    "delivered": false,
+    "delivered_at": ""
+  },
+  "drive_job_folder": "https://drive.google.com/drive/folders/1K--9d2gsNDqfSUA9FpJnn05WbsFpQ9Fe",
+  "local_job_folder": "/kaggle/working/.openclaw/workspace/jobs/PROMPT-TEST-001",
+  "preview_folder": "https://drive.google.com/drive/folders/1_9-zlOkjbOIIBeAcvBCyoh0N8nBGKAkB",
+  "final_folder": "https://drive.google.com/drive/folders/1KfieS-fcviGlvgL4gL5PX9SqW5B9_MhR",
+  "delivery_folder": "https://drive.google.com/drive/folders/1L5sCabM1R9_WTNr91VhQc6n_vAFQ3f-A",
+  "last_updated": "2026-03-13T22:25:30Z"
+}
