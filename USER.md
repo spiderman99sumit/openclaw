@@ -10,6 +10,8 @@ _Learn about the person you're helping. Update this as you go._
 
 ## Context
 
+- Preference: do as much of the work as possible directly; only ask the user to do something when it is genuinely impossible or blocked for the agent.
+
 _(What do they care about? What projects are they working on? What annoys them? What makes them laugh? Build this over time.)_
 
 ---
