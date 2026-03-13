@@ -16,7 +16,7 @@
           "assignments": [
             {
               "name": "local_file_path",
-              "value": "/kaggle/working/.openclaw/workspace/n8n/test-upload.txt",
+              "value": "/root/.n8n-files/test-upload.txt",
               "type": "string"
             },
             {
