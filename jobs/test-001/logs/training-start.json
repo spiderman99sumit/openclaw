@@ -1,0 +1,7 @@
+{
+  "event": "training_started",
+  "timestamp": "2026-03-13T17:38:36Z",
+  "model_type": "sdxl-lora",
+  "platform": "replicate",
+  "run_id": "test-001-run-001"
+}

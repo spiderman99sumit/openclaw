@@ -1,0 +1,5 @@
+{
+  "checkpoint_path": "s3://models/test-001/checkpoint-final.safetensors",
+  "completed_at": "2026-03-13T17:38:36Z",
+  "run_id": "test-001-run-001"
+}
