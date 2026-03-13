@@ -6,5 +6,49 @@
   "drive_job_folder": "https://drive.google.com/drive/folders/1MqqZBxwXDvBrc9qS_NjIEaDoswcExml1",
   "preview_folder": "https://drive.google.com/drive/folders/1qwRq2wsTNMlbNzEpdg4xeWJ0_TI8UsRO",
   "final_folder": "https://drive.google.com/drive/folders/1YgUUwJdInKAoBARJmVmsz10tlfDmMOvY",
-  "delivery_folder": "https://drive.google.com/drive/folders/1MczqAHGIxmdyVxFTRb4Zo-hQIB2oW5Yn"
+  "delivery_folder": "https://drive.google.com/drive/folders/1MczqAHGIxmdyVxFTRb4Zo-hQIB2oW5Yn",
+  "drive": {
+    "root_folder_id": "1MqqZBxwXDvBrc9qS_NjIEaDoswcExml1",
+    "root_folder_link": "https://drive.google.com/drive/folders/1MqqZBxwXDvBrc9qS_NjIEaDoswcExml1",
+    "subfolders": {
+      "intake": "",
+      "references": "",
+      "dataset": "",
+      "previews": "1qwRq2wsTNMlbNzEpdg4xeWJ0_TI8UsRO",
+      "approvals": "",
+      "lora": "",
+      "final_batches": "1YgUUwJdInKAoBARJmVmsz10tlfDmMOvY",
+      "delivery": "1MczqAHGIxmdyVxFTRb4Zo-hQIB2oW5Yn",
+      "logs": "",
+      "metadata": ""
+    }
+  },
+  "preview": {
+    "assets": [],
+    "drive_links": [],
+    "uploaded": false,
+    "uploaded_at": "",
+    "review_status": "pending"
+  },
+  "training": {
+    "model_type": "",
+    "platform": "",
+    "run_id": "",
+    "checkpoint_path": "",
+    "status": "not_started"
+  },
+  "final_batch": {
+    "assets": [],
+    "drive_links": [],
+    "qa_status": "pending"
+  },
+  "delivery": {
+    "package_link": "",
+    "delivered": false,
+    "delivered_at": ""
+  },
+  "client_name": "",
+  "persona_name": "",
+  "created_at": "2026-03-13T02:59:56Z",
+  "updated_at": "2026-03-13T02:59:56Z"
 }

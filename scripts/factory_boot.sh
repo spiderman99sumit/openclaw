@@ -29,6 +29,7 @@ SCRIPTS=(
  "training_handler.py"
  "final_batch_handler.py"
  "delivery_handler.py"
+ "factory_sync_to_drive.py"
 )
 
 MISSING=0
