@@ -61,7 +61,10 @@ def call_openrouter(
  max_tokens: int = 4000,
  temperature: float = 0.85,
 ) -> str:
- """Call OpenRouter API and return the response text."""
+ """Call OpenRouter API with retry logic."""
+ import time
+ import urllib.error
+
  key = api_key or OPENROUTER_API_KEY
  if not key:
   raise ValueError(
@@ -69,32 +72,69 @@ def call_openrouter(
    'Set OPENROUTER_API_KEY env var or pass --api-key'
   )
 
- payload = {
-  'model': model,
-  'messages': [
-   {'role': 'system', 'content': system_prompt},
-   {'role': 'user', 'content': user_prompt},
-  ],
-  'max_tokens': max_tokens,
-  'temperature': temperature,
- }
+ models_to_try = [
+  model,
+  'cognitivecomputations/dolphin-mistral-24b-venice-edition:free',
+  'mistralai/mistral-7b-instruct:free',
+  'google/gemma-2-9b-it:free',
+ ]
+ seen = set()
+ unique_models = []
+ for m in models_to_try:
+  if m not in seen:
+   seen.add(m)
+   unique_models.append(m)
 
- req = urllib.request.Request(
-  OPENROUTER_URL,
-  data=json.dumps(payload).encode('utf-8'),
-  headers={
-   'Content-Type': 'application/json',
-   'Authorization': f'Bearer {key}',
-   'HTTP-Referer': 'https://openclaw.factory',
-   'X-Title': 'AI Influencer Factory',
-  },
-  method='POST',
- )
+ last_error = None
 
- with urllib.request.urlopen(req, timeout=120) as resp:
-  result = json.loads(resp.read().decode('utf-8'))
+ for current_model in unique_models:
+  for attempt in range(3):
+   payload = {
+    'model': current_model,
+    'messages': [
+     {'role': 'system', 'content': system_prompt},
+     {'role': 'user', 'content': user_prompt},
+    ],
+    'max_tokens': max_tokens,
+    'temperature': temperature,
+   }
 
- return result['choices'][0]['message']['content']
+   req = urllib.request.Request(
+    OPENROUTER_URL,
+    data=json.dumps(payload).encode('utf-8'),
+    headers={
+     'Content-Type': 'application/json',
+     'Authorization': f'Bearer {key}',
+     'HTTP-Referer': 'https://openclaw.factory',
+     'X-Title': 'AI Influencer Factory',
+    },
+    method='POST',
+   )
+
+   try:
+    with urllib.request.urlopen(req, timeout=120) as resp:
+     result = json.loads(resp.read().decode('utf-8'))
+    content = result['choices'][0]['message']['content']
+    if current_model != model:
+     print(f' (Used fallback model: {current_model})')
+    return content
+
+   except urllib.error.HTTPError as e:
+    last_error = e
+    if e.code == 429:
+     wait = (attempt + 1) * 10
+     print(f' Rate limited on {current_model}, waiting {wait}s (attempt {attempt + 1}/3)...')
+     time.sleep(wait)
+    else:
+     print(f' HTTP {e.code} on {current_model}: {e.reason}')
+     break
+
+   except Exception as e:
+    last_error = e
+    print(f' Error on {current_model}: {e}')
+    break
+
+ raise RuntimeError(f'All models failed. Last error: {last_error}')
 
 
 SYSTEM_PROMPT = """You are an expert prompt engineer for AI image generation.
