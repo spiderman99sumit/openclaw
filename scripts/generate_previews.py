@@ -69,8 +69,8 @@ def generate_single_image(
  height: int = 1536,
  endpoint: str = MODAL_ENDPOINT,
  timeout: int = 300,
-) -> bytes:
- """Call Modal ComfyUI endpoint and return JPEG bytes."""
+) -> tuple[bytes, str]:
+ """Call Modal ComfyUI endpoint. Returns (image_bytes, extension)."""
  if seed == -1:
   seed = random.randint(0, 2**32 - 1)
 
@@ -90,11 +90,22 @@ def generate_single_image(
 
  start = time.time()
  with urllib.request.urlopen(req, timeout=timeout) as resp:
+  content_type = resp.headers.get('Content-Type', '')
   data = resp.read()
  elapsed = time.time() - start
 
- print(f' Done: {len(data)} bytes in {elapsed:.1f}s')
- return data
+ # Detect actual format
+ if data[:8] == b'\x89PNG\r\n\x1a\n':
+  ext = '.png'
+ elif data[:2] == b'\xff\xd8':
+  ext = '.jpg'
+ elif data[:4] == b'RIFF':
+  ext = '.webp'
+ else:
+  ext = '.png'
+
+ print(f' Done: {len(data)} bytes in {elapsed:.1f}s (format: {ext})')
+ return data, ext
 
 
 def generate_preview_batch(
@@ -129,12 +140,10 @@ def generate_preview_batch(
 
  for i, prompt in enumerate(prompts):
   seed = base_seed + i
-  filename = f'preview-{i+1:03d}-seed{seed}.jpg'
-  out_path = previews_dir / filename
 
   try:
-   print(f'\n[{i+1}/{len(prompts)}] Generating {filename}')
-   img_bytes = generate_single_image(
+   print(f'\n[{i+1}/{len(prompts)}] Generating preview {i+1}')
+   img_bytes, ext = generate_single_image(
     prompt=prompt,
     negative_prompt=negative_prompt,
     seed=seed,
@@ -142,6 +151,8 @@ def generate_preview_batch(
     height=height,
     endpoint=endpoint,
    )
+   filename = f'preview-{i+1:03d}-seed{seed}{ext}'
+   out_path = previews_dir / filename
    out_path.write_bytes(img_bytes)
    generated_files.append(out_path)
    print(f' Saved: {out_path}')
@@ -233,7 +244,7 @@ def main() -> int:
   return 0
 
  elif args.cmd == 'single':
-  img_bytes = generate_single_image(
+  img_bytes, ext = generate_single_image(
    prompt=args.prompt,
    seed=args.seed,
    width=args.width,
@@ -241,6 +252,8 @@ def main() -> int:
    endpoint=args.endpoint,
   )
   out = Path(args.output)
+  if out.suffix.lower() != ext:
+   out = out.with_suffix(ext)
   out.parent.mkdir(parents=True, exist_ok=True)
   out.write_bytes(img_bytes)
   print(f'\nSaved: {out} ({len(img_bytes)} bytes)')
@@ -249,7 +262,7 @@ def main() -> int:
  elif args.cmd == 'ping':
   print(f'Testing endpoint: {args.endpoint}')
   try:
-   img = generate_single_image(
+   img, ext = generate_single_image(
     prompt='test image, simple gradient background',
     seed=42,
     width=512,
@@ -257,7 +270,7 @@ def main() -> int:
     endpoint=args.endpoint,
     timeout=120,
    )
-   print(f'SUCCESS: Got {len(img)} bytes back')
+   print(f'SUCCESS: Got {len(img)} bytes back (format: {ext})')
    return 0
   except Exception as e:
    print(f'FAILED: {e}')
