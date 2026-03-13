@@ -181,7 +181,15 @@ Each prompt must start with: RAW photo of {trigger_word}
 def parse_prompts(raw_text: str, trigger_word: str) -> List[str]:
  """Parse numbered prompts from LLM output."""
  prompts = []
+
+ # First, try to split merged lines (e.g., "8. prompt one 9. prompt two")
+ # by detecting numbered patterns mid-line
+ expanded_lines = []
  for line in raw_text.strip().split('\n'):
+  parts = re.split(r'(?<=\S)\s+(?=\d+[\.\)\:\-]\s)', line.strip())
+  expanded_lines.extend(parts)
+
+ for line in expanded_lines:
   line = line.strip()
   if not line:
    continue
