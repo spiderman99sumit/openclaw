@@ -217,7 +217,12 @@ PY
 
 # 12. OpenClaw config
 info "--- 12. OpenClaw Config ---"
-if [ -f "$PERSIST_DIR/openclaw.json.bak" ]; then
+if [ -f "/root/.openclaw/openclaw.json" ]; then
+    cp "/root/.openclaw/openclaw.json" "$PERSIST_DIR/openclaw.json.bak"
+    ok "Using persistent live config and refreshing backup"
+    echo ""
+    echo "Now run: bash /kaggle/working/.openclaw/workspace/scripts/quickstart.sh"
+elif [ -f "$PERSIST_DIR/openclaw.json.bak" ]; then
     cp "$PERSIST_DIR/openclaw.json.bak" /root/.openclaw/openclaw.json
     ok "Config restored from backup"
     echo ""

@@ -240,11 +240,14 @@ setup_persistent_n8n_symlink
 # 7. Restore config
 info "--- 7. OpenClaw Config ---"
 mkdir -p /root/.openclaw
-if [ -f "$PERSIST_DIR/openclaw.json.bak" ]; then
+if [ -f "/root/.openclaw/openclaw.json" ]; then
+    cp "/root/.openclaw/openclaw.json" "$PERSIST_DIR/openclaw.json.bak"
+    ok "Using persistent live config and refreshing backup"
+elif [ -f "$PERSIST_DIR/openclaw.json.bak" ]; then
     cp "$PERSIST_DIR/openclaw.json.bak" /root/.openclaw/openclaw.json
     ok "Config restored from backup"
 else
-    fail "No config backup at $PERSIST_DIR/openclaw.json.bak — run rebuild.sh first"
+    fail "No live config or backup found at $PERSIST_DIR/openclaw.json.bak — run rebuild.sh first"
 fi
 
 # 8. Agent directories + runtime backups
@@ -280,32 +283,8 @@ pkill -f "scripts/autopush.sh" 2>/dev/null || true
 sleep 2
 ok "Old processes cleaned"
 
-# 11. Gateway
-info "--- 11. Gateway ---"
-rm -f "$LOG_GATEWAY"
-nohup openclaw gateway --port 18789 > "$LOG_GATEWAY" 2>&1 &
-
-GATEWAY_OK=0
-for attempt in 1 2 3 4 5 6; do
-    sleep 5
-    if ss -ltn | grep -q ':18789'; then
-        if openclaw health > /tmp/openclaw_health.out 2>&1; then
-            GATEWAY_OK=1
-            break
-        fi
-    fi
-    info "Gateway warmup attempt $attempt/6..."
-done
-
-if [ "$GATEWAY_OK" != "1" ]; then
-    tail -80 "$LOG_GATEWAY" || true
-    cat /tmp/openclaw_health.out 2>/dev/null || true
-    fail "Gateway failed to become healthy"
-fi
-ok "Gateway running and healthy"
-
-# 12. n8n
-info "--- 12. n8n ---"
+# 11. n8n
+info "--- 11. n8n ---"
 rm -f "$LOG_N8N"
 nohup "${N8N_BIN:-/usr/lib/node_modules/n8n/bin/n8n}" start > "$LOG_N8N" 2>&1 &
 sleep 8
@@ -316,8 +295,8 @@ else
     fail "n8n failed to start"
 fi
 
-# 13. VS Code
-info "--- 13. VS Code Tunnel ---"
+# 12. VS Code
+info "--- 12. VS Code Tunnel ---"
 if [ -f "/kaggle/working/.vscode/code" ]; then
     rm -f "$LOG_VSCODE"
     nohup /kaggle/working/.vscode/code tunnel --accept-server-license-terms --name openclaw-kaggle > "$LOG_VSCODE" 2>&1 &
@@ -327,8 +306,8 @@ else
     warn "VS Code CLI missing"
 fi
 
-# 14. Autopush
-info "--- 14. Autopush ---"
+# 13. Autopush
+info "--- 13. Autopush ---"
 nohup bash -c '
 while true; do
   bash /kaggle/working/.openclaw/workspace/scripts/autopush.sh >> /kaggle/working/autopush.log 2>&1
@@ -337,24 +316,61 @@ done
 ' > /dev/null 2>&1 &
 ok "Autopush every 60s"
 
-# 15. Persist runtime state for next Kaggle restart
-info "--- 15. Persist Runtime State ---"
+# 14. Persist runtime state for next Kaggle restart
+info "--- 14. Persist Runtime State ---"
 backup_runtime_state
 snapshot_root_openclaw
 ok "Config/auth/device state backed up to persistent storage"
 ok "Compact /root/.openclaw snapshot saved to $ROOT_BACKUP_DIR"
+
+# 15. Gateway (start last; don't kill the whole script on health-check noise)
+info "--- 15. Gateway ---"
+rm -f "$LOG_GATEWAY"
+nohup openclaw gateway --port 18789 > "$LOG_GATEWAY" 2>&1 &
+
+GATEWAY_PORT_OK=0
+GATEWAY_HEALTH_OK=0
+for attempt in 1 2 3 4 5 6; do
+    sleep 5
+    if ss -ltn | grep -q ':18789'; then
+        GATEWAY_PORT_OK=1
+        if openclaw health > /tmp/openclaw_health.out 2>&1; then
+            GATEWAY_HEALTH_OK=1
+            break
+        fi
+    fi
+    info "Gateway warmup attempt $attempt/6..."
+done
+
+if [ "$GATEWAY_HEALTH_OK" = "1" ]; then
+    ok "Gateway running and healthy"
+elif [ "$GATEWAY_PORT_OK" = "1" ]; then
+    warn "Gateway port is open but health check is still noisy; continuing"
+    tail -80 "$LOG_GATEWAY" || true
+    cat /tmp/openclaw_health.out 2>/dev/null || true
+else
+    warn "Gateway did not become reachable; continuing so n8n remains available"
+    tail -80 "$LOG_GATEWAY" || true
+    cat /tmp/openclaw_health.out 2>/dev/null || true
+fi
 
 # 16. Verify
 info ""
 info "============================================="
 info "  VERIFICATION"
 info "============================================="
-openclaw health
+if openclaw health; then
+    ok "openclaw health passed"
+else
+    warn "openclaw health reported warnings/errors"
+fi
 openclaw channels status || warn "Channel status reported warnings"
 
 info ""
 info "============================================="
-info "  ✅ CORE SERVICES STARTED"
+info "  ✅ STARTUP COMPLETE"
 info "============================================="
 info "Persistent runtime dir: $PERSIST_RUNTIME_DIR"
+info "Persistent n8n dir: $PERSIST_N8N_DIR"
+info "If gateway is noisy, n8n should still be up on port 5678"
 info "If Discord is briefly disconnected, wait ~10-20s and recheck: openclaw channels status"

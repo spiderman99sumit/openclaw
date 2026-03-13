@@ -17,7 +17,11 @@
   },
   {
     "path": "agents/main/sessions/31371d56-cc51-4e67-b023-b60b73a2cb8d.jsonl",
-    "size": 86565
+    "size": 176074
+  },
+  {
+    "path": "agents/main/sessions/31371d56-cc51-4e67-b023-b60b73a2cb8d.jsonl.lock",
+    "size": 83
   },
   {
     "path": "agents/main/sessions/d13831cf-3e85-491f-9f3c-2692b3df7467.jsonl.reset.2026-03-13T06-36-12.829Z",
@@ -25,7 +29,7 @@
   },
   {
     "path": "agents/main/sessions/sessions.json",
-    "size": 18611
+    "size": 18610
   },
   {
     "path": "agents/manager/agent/auth-profiles.json",
@@ -85,7 +89,7 @@
   },
   {
     "path": "openclaw.json",
-    "size": 8123
+    "size": 9082
   },
   {
     "path": "openclaw.json.bak",
