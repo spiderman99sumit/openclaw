@@ -2,9 +2,9 @@
   "job_id": "JESUS-20260313-231455",
   "client_name": "jesus",
   "persona_name": "jesus-persona",
-  "status": "new",
+  "status": "preview_running",
   "created_at": "2026-03-13T23:14:55Z",
-  "updated_at": "2026-03-13T23:15:17Z",
+  "updated_at": "2026-03-13T23:17:24Z",
   "drive": {
     "root_folder_id": "1YraiZZvhUSqFzJjJuPQ5q0R1Q7vn23Bc",
     "root_folder_link": "https://drive.google.com/drive/folders/1YraiZZvhUSqFzJjJuPQ5q0R1Q7vn23Bc",
