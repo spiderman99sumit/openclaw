@@ -2,23 +2,23 @@
   "job_id": "REAL-001",
   "client_name": "RealClient",
   "persona_name": "Influencer",
-  "status": "new",
+  "status": "preview_running",
   "created_at": "2026-03-13T21:30:29Z",
-  "updated_at": "2026-03-13T21:30:29Z",
+  "updated_at": "2026-03-13T21:30:50Z",
   "drive": {
-    "root_folder_id": "",
-    "root_folder_link": "",
+    "root_folder_id": "1zf9_sWT6GH8PH2W7_GVcS6AeNPEZ4igS",
+    "root_folder_link": "https://drive.google.com/drive/folders/1zf9_sWT6GH8PH2W7_GVcS6AeNPEZ4igS",
     "subfolders": {
-      "intake": "",
-      "references": "",
-      "dataset": "",
-      "previews": "",
-      "approvals": "",
-      "lora": "",
-      "final_batches": "",
-      "delivery": "",
-      "logs": "",
-      "metadata": ""
+      "intake": "1GuxQzhkqt3StCy3tuSaq9YxPLZbDcerH",
+      "references": "1jyaVgkmFjIITxXE-hryuL9UPCERMVO3E",
+      "dataset": "1_wtLb8uBCyK1vKDn5Rl8vWr5Yemnci25",
+      "previews": "1j6XLpgaz-PxWsfomhFStCRjS0PBKws7x",
+      "approvals": "1M0fpKSWccpC2YTQkW22ZCeqrnaD19DDg",
+      "lora": "1sMFi988vNdJ2ukSfK17sdgCL1rZlbIrt",
+      "final_batches": "1JAAESStX1G03Nt16Uim4Ls27AixRHj0g",
+      "delivery": "1su6H6sajW_o8EOQ6Gk6-Nk_vl2uVXvYV",
+      "logs": "1bXWbqlnqdKKvZLfa7mdvC6DSj46p5odR",
+      "metadata": "1m9mY4Gb5xwMVre6n3KDGw96ThmzQwVJk"
     }
   },
   "preview": {
@@ -44,5 +44,11 @@
     "package_link": "",
     "delivered": false,
     "delivered_at": ""
-  }
+  },
+  "drive_job_folder": "https://drive.google.com/drive/folders/1zf9_sWT6GH8PH2W7_GVcS6AeNPEZ4igS",
+  "local_job_folder": "/kaggle/working/.openclaw/workspace/jobs/REAL-001",
+  "preview_folder": "https://drive.google.com/drive/folders/1j6XLpgaz-PxWsfomhFStCRjS0PBKws7x",
+  "final_folder": "https://drive.google.com/drive/folders/1JAAESStX1G03Nt16Uim4Ls27AixRHj0g",
+  "delivery_folder": "https://drive.google.com/drive/folders/1su6H6sajW_o8EOQ6Gk6-Nk_vl2uVXvYV",
+  "last_updated": "2026-03-13T21:30:49Z"
 }
