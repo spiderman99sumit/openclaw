@@ -4,21 +4,21 @@
   "persona_name": "TestPersona",
   "status": "new",
   "created_at": "2026-03-13T16:42:21Z",
-  "updated_at": "2026-03-13T16:42:21Z",
+  "updated_at": "2026-03-13T16:44:26Z",
   "drive": {
-    "root_folder_id": "",
-    "root_folder_link": "",
+    "root_folder_id": "1KjwujyhE2sIinqo-4bCHqqIVO9sdLyoL",
+    "root_folder_link": "https://drive.google.com/drive/folders/1KjwujyhE2sIinqo-4bCHqqIVO9sdLyoL",
     "subfolders": {
-      "intake": "",
-      "references": "",
-      "dataset": "",
-      "previews": "",
-      "approvals": "",
-      "lora": "",
-      "final_batches": "",
-      "delivery": "",
-      "logs": "",
-      "metadata": ""
+      "intake": "1quFronhWxvoK-6YdahvllofjWv9a7oJi",
+      "references": "18-8_51ySrGsOhDiFrimUms04QJ6T6RWN",
+      "dataset": "1v742Y2YsOMZumZmhaPtrBdde5SfRzusK",
+      "previews": "1EJKQhQ4FaBVohXALR-YpO-9ft6Sp8-NJ",
+      "approvals": "1jPtwRQLupE0q0D4gE1T18rO1kR6-jYx3",
+      "lora": "1Tc1_Y1vGZmtcE-5Uj0UKQA6TbK0gKOWL",
+      "final_batches": "18u00LpaGc8aHlwgqTuRGM-EVvdrlAzGF",
+      "delivery": "13mWBmZ4MQJq_rfD6O9ajuJJBaMyICBqD",
+      "logs": "1U9YvKCu5_AoXCXA8SDzDNV16-43De9j_",
+      "metadata": "1xdJqle6TScuDeby0mNSbBv9gd5ST1tbB"
     }
   },
   "preview": {
@@ -50,5 +50,5 @@
   "preview_folder": "https://drive.google.com/drive/folders/1EJKQhQ4FaBVohXALR-YpO-9ft6Sp8-NJ",
   "final_folder": "https://drive.google.com/drive/folders/18u00LpaGc8aHlwgqTuRGM-EVvdrlAzGF",
   "delivery_folder": "https://drive.google.com/drive/folders/13mWBmZ4MQJq_rfD6O9ajuJJBaMyICBqD",
-  "last_updated": "2026-03-13T16:42:48Z"
+  "last_updated": "2026-03-13T16:44:26Z"
 }

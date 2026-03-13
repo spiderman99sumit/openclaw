@@ -360,6 +360,7 @@ def update_job_status(
     path = job_dir(job_id) / "metadata" / "job.json"
     job_record = load_json(path, {"job_id": job_id})
     job_record["status"] = status
+    job_record["updated_at"] = now_iso()
     job_record["last_updated"] = now_iso()
     if notes is not None:
         job_record["notes"] = notes
