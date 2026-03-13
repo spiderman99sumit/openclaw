@@ -2,23 +2,23 @@
   "job_id": "auto-test-001",
   "client_name": "AutoTestClient",
   "persona_name": "TestPersona",
-  "status": "new",
+  "status": "preview_running",
   "created_at": "2026-03-13T19:56:08Z",
-  "updated_at": "2026-03-13T19:56:08Z",
+  "updated_at": "2026-03-13T19:56:28Z",
   "drive": {
-    "root_folder_id": "",
-    "root_folder_link": "",
+    "root_folder_id": "1ifD01WT-6iXUdFj7uGeOZe4jhYLTvrF8",
+    "root_folder_link": "https://drive.google.com/drive/folders/1ifD01WT-6iXUdFj7uGeOZe4jhYLTvrF8",
     "subfolders": {
-      "intake": "",
-      "references": "",
-      "dataset": "",
-      "previews": "",
-      "approvals": "",
-      "lora": "",
-      "final_batches": "",
-      "delivery": "",
-      "logs": "",
-      "metadata": ""
+      "intake": "1m4Qz40NcGqrfndMN3x4_sljBdZpWeSAm",
+      "references": "1f74PPBy0BValST_Wwbj1NvEVROkalGHM",
+      "dataset": "1FtFqqsbi6H_OU0uKmg1Rpy5WRDsJmvyw",
+      "previews": "1g7QPABRW8lD2YFKt2VQ5GwPVAGwRiYQ5",
+      "approvals": "1dnHlJNwlA1KRf6GiSwbQzN6GgizGovg_",
+      "lora": "1F2DSa6QmbUHjMfgQFLwTu8KqcZlPlNnD",
+      "final_batches": "1JmECky-kzmD2kmck5DvI6EHR0Mf7dnmS",
+      "delivery": "1H_r6drOI20Sf58SZ-r_ZOYurA9VR4XRL",
+      "logs": "1leKKnC7zA4hHe0Ot_L-4eD0J5w5J5EKV",
+      "metadata": "1h-LRZf-3B-l7bnQejKJn96L4mUxEprvx"
     }
   },
   "preview": {
@@ -44,5 +44,11 @@
     "package_link": "",
     "delivered": false,
     "delivered_at": ""
-  }
+  },
+  "drive_job_folder": "https://drive.google.com/drive/folders/1ifD01WT-6iXUdFj7uGeOZe4jhYLTvrF8",
+  "local_job_folder": "/kaggle/working/.openclaw/workspace/jobs/auto-test-001",
+  "preview_folder": "https://drive.google.com/drive/folders/1g7QPABRW8lD2YFKt2VQ5GwPVAGwRiYQ5",
+  "final_folder": "https://drive.google.com/drive/folders/1JmECky-kzmD2kmck5DvI6EHR0Mf7dnmS",
+  "delivery_folder": "https://drive.google.com/drive/folders/1H_r6drOI20Sf58SZ-r_ZOYurA9VR4XRL",
+  "last_updated": "2026-03-13T19:56:27Z"
 }
