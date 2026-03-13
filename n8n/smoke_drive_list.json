@@ -16,10 +16,9 @@
           "authentication": "oAuth2",
           "resource": "file",
           "operation": "list",
-          "useQueryString": false,
-          "limit": 1,
-          "queryFilters": {},
-          "options": {}
+          "useQueryString": true,
+          "queryString": "trashed=false",
+          "limit": 1
         },
         "id": "google_drive_list",
         "name": "Google Drive List",
@@ -28,7 +27,7 @@
         "position": [560, 300],
         "credentials": {
           "googleDriveOAuth2Api": {
-            "id": "OF8XOSO6ObhXJMmA",
+            "id": "pRwzmNMPiFAGaBK2",
             "name": "Google Drive account"
           }
         }
