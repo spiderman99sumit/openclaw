@@ -1,0 +1,95 @@
+{
+  "name": "Factory Preview Upload v2",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "factory-preview-upload-v2",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1.1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "functionCode": "const body = $input.first().json.body || $input.first().json;\nconst files = body.files || [];\nconst folder_id = body.folder_id || '';\nconst job_id = body.job_id || '';\n\nreturn files.map((f, i) => ({\n  json: {\n    index: i,\n    filename: f.filename,\n    mime_type: f.mime_type,\n    folder_id: folder_id,\n    job_id: job_id,\n    total_files: files.length\n  },\n  binary: {\n    data: {\n      data: f.base64_data,\n      mimeType: f.mime_type,\n      fileName: f.filename\n    }\n  }\n}));"
+      },
+      "id": "split-and-decode",
+      "name": "Split and Decode Files",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "file",
+        "operation": "upload",
+        "inputDataFieldName": "data",
+        "name": "={{ $json.filename }}",
+        "driveId": "root",
+        "folderId": "={{ $json.folder_id }}",
+        "options": {}
+      },
+      "id": "drive-upload",
+      "name": "Google Drive Upload",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [680, 300],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "OF8XOSO6ObhXJMmA",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "functionCode": "const items = $input.all();\nconst drive_links = items.map(item => {\n  const fileId = item.json.id || item.json.fileId || '';\n  return fileId ? `https://drive.google.com/file/d/${fileId}/view` : '';\n}).filter(link => link !== '');\n\nconst job_id = items[0]?.json?.job_id || '';\n\nreturn [{\n  json: {\n    job_id: job_id,\n    drive_links: drive_links,\n    uploaded_count: drive_links.length,\n    errors: []\n  }\n}];"
+      },
+      "id": "aggregate-results",
+      "name": "Aggregate Results",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json) }}",
+        "options": {}
+      },
+      "id": "respond",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1120, 300]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [[{ "node": "Split and Decode Files", "type": "main", "index": 0 }]]
+    },
+    "Split and Decode Files": {
+      "main": [[{ "node": "Google Drive Upload", "type": "main", "index": 0 }]]
+    },
+    "Google Drive Upload": {
+      "main": [[{ "node": "Aggregate Results", "type": "main", "index": 0 }]]
+    },
+    "Aggregate Results": {
+      "main": [[{ "node": "Respond to Webhook", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": [
+    {
+      "name": "factory"
+    }
+  ]
+}

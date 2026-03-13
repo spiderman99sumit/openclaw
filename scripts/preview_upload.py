@@ -98,26 +98,27 @@ def stage_for_n8n(job_id: str, path: Path) -> Path:
 
 
 def fallback_single_uploads(job_id: str, job: Dict[str, Any], files: List[Path], webhook_url: str) -> List[str]:
+    """Upload files one at a time using the same batch contract."""
     drive_links: List[str] = []
     folder_id = infer_folder_id(job)
     for path in files:
-        staged = stage_for_n8n(job_id, path)
         payload = {
             'job_id': job_id,
-            'asset_id': f'{job_id}:{path.stem}',
-            'stage': 'preview',
-            'asset_type': 'image',
-            'drive_folder_id': folder_id,
-            'drive_folder_link': job.get('preview_folder', ''),
-            'local_file_path': str(staged),
-            'file_name': path.name,
-            'notes': 'preview upload via preview_upload.py',
-            'created_at': now_iso(),
+            'folder_id': folder_id,
+            'files': [
+                {
+                    'filename': path.name,
+                    'mime_type': mime_for(path),
+                    'base64_data': to_base64(path)
+                }
+            ]
         }
-        result = post_json(webhook_url, payload)
-        link = result.get('drive_link', '')
-        if link:
-            drive_links.append(link)
+        try:
+            result = post_json(webhook_url, payload)
+            links = result.get('drive_links', [])
+            drive_links.extend(links)
+        except Exception as e:
+            print(f'Warning: failed to upload {path.name}: {e}')
     return drive_links
 
 
