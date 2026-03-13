@@ -75,8 +75,9 @@ def call_openrouter(
  models_to_try = [
   model,
   'cognitivecomputations/dolphin-mistral-24b-venice-edition:free',
-  'mistralai/mistral-7b-instruct:free',
-  'google/gemma-2-9b-it:free',
+  'nvidia/nemotron-3-super-120b-a12b:free',
+  'nvidia/nemotron-3-nano-30b-a3b:free',
+  'nvidia/nemotron-nano-9b-v2:free',
  ]
  seen = set()
  unique_models = []
