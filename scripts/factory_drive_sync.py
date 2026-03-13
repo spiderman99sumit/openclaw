@@ -435,6 +435,12 @@ def build_parser() -> argparse.ArgumentParser:
     b.add_argument("--sheet-id", default=DEFAULT_SHEET_ID)
     b.add_argument("--drive-root-id", default=DEFAULT_DRIVE_ROOT_ID)
 
+    b2 = sub.add_parser("bootstrap")
+    b2.add_argument("--job-id", required=True)
+    b2.add_argument("--folder-name")
+    b2.add_argument("--sheet-id", default=DEFAULT_SHEET_ID)
+    b2.add_argument("--drive-root-id", default=DEFAULT_DRIVE_ROOT_ID)
+
     u = sub.add_parser("upload-preview")
     u.add_argument("job_id")
     u.add_argument("file_path")
@@ -473,6 +479,8 @@ def main() -> int:
     client.ensure_sheet_headers()
 
     if args.cmd == "bootstrap-job":
+        result = bootstrap_job_drive(client, args.job_id, folder_name=args.folder_name)
+    elif args.cmd == "bootstrap":
         result = bootstrap_job_drive(client, args.job_id, folder_name=args.folder_name)
     elif args.cmd == "upload-preview":
         result = upload_preview_to_drive(

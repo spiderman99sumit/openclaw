@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AI Influencer Factory Job",
+  "type": "object",
+  "required": [
+    "job_id",
+    "client_name",
+    "persona_name",
+    "status",
+    "created_at",
+    "updated_at",
+    "drive",
+    "preview",
+    "training",
+    "final_batch",
+    "delivery"
+  ],
+  "properties": {
+    "job_id": {"type": "string"},
+    "client_name": {"type": "string"},
+    "persona_name": {"type": "string"},
+    "status": {"type": "string", "default": "new"},
+    "created_at": {"type": "string"},
+    "updated_at": {"type": "string"},
+    "drive": {
+      "type": "object",
+      "required": ["root_folder_id", "root_folder_link", "subfolders"],
+      "properties": {
+        "root_folder_id": {"type": "string"},
+        "root_folder_link": {"type": "string"},
+        "subfolders": {
+          "type": "object",
+          "required": ["intake", "references", "dataset", "previews", "approvals", "lora", "final_batches", "delivery", "logs", "metadata"],
+          "properties": {
+            "intake": {"type": "string"},
+            "references": {"type": "string"},
+            "dataset": {"type": "string"},
+            "previews": {"type": "string"},
+            "approvals": {"type": "string"},
+            "lora": {"type": "string"},
+            "final_batches": {"type": "string"},
+            "delivery": {"type": "string"},
+            "logs": {"type": "string"},
+            "metadata": {"type": "string"}
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": true
+    },
+    "preview": {
+      "type": "object",
+      "required": ["assets", "drive_links", "uploaded", "uploaded_at", "review_status"],
+      "properties": {
+        "assets": {"type": "array", "items": {}},
+        "drive_links": {"type": "array", "items": {"type": "string"}},
+        "uploaded": {"type": "boolean"},
+        "uploaded_at": {"type": "string"},
+        "review_status": {"type": "string"}
+      },
+      "additionalProperties": true
+    },
+    "training": {
+      "type": "object",
+      "required": ["model_type", "platform", "run_id", "checkpoint_path", "status"],
+      "properties": {
+        "model_type": {"type": "string"},
+        "platform": {"type": "string"},
+        "run_id": {"type": "string"},
+        "checkpoint_path": {"type": "string"},
+        "status": {"type": "string"}
+      },
+      "additionalProperties": true
+    },
+    "final_batch": {
+      "type": "object",
+      "required": ["assets", "drive_links", "qa_status"],
+      "properties": {
+        "assets": {"type": "array", "items": {}},
+        "drive_links": {"type": "array", "items": {"type": "string"}},
+        "qa_status": {"type": "string"}
+      },
+      "additionalProperties": true
+    },
+    "delivery": {
+      "type": "object",
+      "required": ["package_link", "delivered", "delivered_at"],
+      "properties": {
+        "package_link": {"type": "string"},
+        "delivered": {"type": "boolean"},
+        "delivered_at": {"type": "string"}
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}
