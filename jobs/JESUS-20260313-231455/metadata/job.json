@@ -1,0 +1,54 @@
+{
+  "job_id": "JESUS-20260313-231455",
+  "client_name": "jesus",
+  "persona_name": "jesus-persona",
+  "status": "new",
+  "created_at": "2026-03-13T23:14:55Z",
+  "updated_at": "2026-03-13T23:15:17Z",
+  "drive": {
+    "root_folder_id": "1YraiZZvhUSqFzJjJuPQ5q0R1Q7vn23Bc",
+    "root_folder_link": "https://drive.google.com/drive/folders/1YraiZZvhUSqFzJjJuPQ5q0R1Q7vn23Bc",
+    "subfolders": {
+      "intake": "1y1bo_YYrXkJhu4DgJoar6BnhNQoSyxTe",
+      "references": "19xwdNcB_C7rUDqzADN-iM5ApIb_Eht_E",
+      "dataset": "1y6Eef3AfpTY2m5lHpTFI40-IXysADnsV",
+      "previews": "1VTZLEGwYNfZUdIJj2i0du6UcreNbMD-Z",
+      "approvals": "1B03QATNFHpAQPbJeyCc3ArQiqipJgupW",
+      "lora": "1yJyIOC3Nk8P8EajcAypO0rUl_hqCoCoW",
+      "final_batches": "1ej8FLtU6tx14UtA-YReTt7cZ-pvyisBb",
+      "delivery": "1NMZ3lXvdZolxNKH8yCfTALGxKCznY_jA",
+      "logs": "1jerFOrNYlAGBxhq6Dxnwh8EBU6PWd9nQ",
+      "metadata": "1AVTMs9SKY2xIQVfYFr-37w5wNeKTZQNP"
+    }
+  },
+  "preview": {
+    "assets": [],
+    "drive_links": [],
+    "uploaded": false,
+    "uploaded_at": "",
+    "review_status": "pending"
+  },
+  "training": {
+    "model_type": "",
+    "platform": "",
+    "run_id": "",
+    "checkpoint_path": "",
+    "status": "not_started"
+  },
+  "final_batch": {
+    "assets": [],
+    "drive_links": [],
+    "qa_status": "pending"
+  },
+  "delivery": {
+    "package_link": "",
+    "delivered": false,
+    "delivered_at": ""
+  },
+  "drive_job_folder": "https://drive.google.com/drive/folders/1YraiZZvhUSqFzJjJuPQ5q0R1Q7vn23Bc",
+  "local_job_folder": "/kaggle/working/.openclaw/workspace/jobs/JESUS-20260313-231455",
+  "preview_folder": "https://drive.google.com/drive/folders/1VTZLEGwYNfZUdIJj2i0du6UcreNbMD-Z",
+  "final_folder": "https://drive.google.com/drive/folders/1ej8FLtU6tx14UtA-YReTt7cZ-pvyisBb",
+  "delivery_folder": "https://drive.google.com/drive/folders/1NMZ3lXvdZolxNKH8yCfTALGxKCznY_jA",
+  "last_updated": "2026-03-13T23:15:17Z"
+}
