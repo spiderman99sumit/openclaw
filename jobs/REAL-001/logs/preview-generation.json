@@ -1,0 +1,20 @@
+{
+  "job_id": "REAL-001",
+  "generated_at": "2026-03-13T21:32:41Z",
+  "endpoint": "https://sumit-pbh999--comfyui-zimage-generate.modal.run",
+  "base_seed": 55555,
+  "width": 864,
+  "height": 1536,
+  "prompts_used": [
+    "RAW photo of p3r5on young woman, professional headshot, studio lighting, neutral background, ultra-realistic, 8k resolution, highly detailed",
+    "RAW photo of p3r5on young woman, casual lifestyle photo, natural lighting, coffee shop setting, ultra-realistic, 8k resolution, highly detailed",
+    "RAW photo of p3r5on young woman, outdoor portrait, golden hour lighting, urban background, ultra-realistic, 8k resolution, highly detailed"
+  ],
+  "negative_prompt": "low resolution, cartoon, anime, CGI, 3D render, plastic skin, distorted face, blurry, deformed",
+  "files_generated": [
+    "preview-001-seed55555.png",
+    "preview-002-seed55556.png",
+    "preview-003-seed55557.png"
+  ],
+  "errors": []
+}
