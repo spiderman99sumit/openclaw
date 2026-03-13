@@ -2,9 +2,9 @@
   "job_id": "REAL-001",
   "client_name": "RealClient",
   "persona_name": "Influencer",
-  "status": "final_generation_running",
+  "status": "training_done",
   "created_at": "2026-03-13T21:30:29Z",
-  "updated_at": "2026-03-13T21:33:00Z",
+  "updated_at": "2026-03-13T21:34:41Z",
   "drive": {
     "root_folder_id": "1zf9_sWT6GH8PH2W7_GVcS6AeNPEZ4igS",
     "root_folder_link": "https://drive.google.com/drive/folders/1zf9_sWT6GH8PH2W7_GVcS6AeNPEZ4igS",
@@ -57,9 +57,21 @@
     "completed_at": "2026-03-13T21:33:00Z"
   },
   "final_batch": {
-    "assets": [],
+    "assets": [
+      "final-001-seed88888.png",
+      "final-002-seed88889.png",
+      "final-003-seed88890.png",
+      "final-004-seed88891.png",
+      "final-005-seed88892.png"
+    ],
     "drive_links": [],
-    "qa_status": "pending"
+    "qa_status": "pending",
+    "generation_record": {
+      "base_seed": 88888,
+      "endpoint": "https://sumit-pbh999--comfyui-zimage-generate.modal.run",
+      "generated_at": "2026-03-13T21:34:41Z",
+      "count": 5
+    }
   },
   "delivery": {
     "package_link": "",

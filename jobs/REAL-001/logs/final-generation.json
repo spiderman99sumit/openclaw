@@ -1,0 +1,24 @@
+{
+  "job_id": "REAL-001",
+  "stage": "final_batch",
+  "generated_at": "2026-03-13T21:34:41Z",
+  "endpoint": "https://sumit-pbh999--comfyui-zimage-generate.modal.run",
+  "base_seed": 88888,
+  "width": 864,
+  "height": 1536,
+  "prompts_used": [
+    "RAW photo of p3r5on young woman, professional headshot, studio lighting, neutral background, ultra-realistic, 8k resolution, highly detailed",
+    "RAW photo of p3r5on young woman, casual lifestyle, coffee shop, natural window lighting, ultra-realistic, 8k resolution",
+    "RAW photo of p3r5on young woman, outdoor portrait, golden hour, city skyline background, ultra-realistic, 8k resolution",
+    "RAW photo of p3r5on young woman, fitness lifestyle, activewear, modern gym, ultra-realistic, 8k resolution",
+    "RAW photo of p3r5on young woman, elegant evening dress, upscale restaurant, soft lighting, ultra-realistic, 8k resolution"
+  ],
+  "files_generated": [
+    "final-001-seed88888.png",
+    "final-002-seed88889.png",
+    "final-003-seed88890.png",
+    "final-004-seed88891.png",
+    "final-005-seed88892.png"
+  ],
+  "errors": []
+}
