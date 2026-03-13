@@ -67,7 +67,7 @@ keys = [
     'GIT_AUTHOR_NAME','GITHUB_REPO_URL','GITHUB_TOKEN',
     'LIGHTNING_API_KEY','LIGHTNING_USER_ID','MODAL_TOKEN_ID',
     'MODAL_TOKEN_SECRET','OPENROUTER_API_KEY','OPENROUTER_MODEL',
-    'GATEWAY_AUTH_TOKEN'
+    'GATEWAY_AUTH_TOKEN','N8N_PUBLIC_URL'
 ]
 found = 0
 path = '/kaggle/working/.openclaw/credentials/openclaw-secrets.env'
@@ -82,6 +82,17 @@ with open(path, 'w') as f:
 print(f'✅ Secrets: {found}/{len(keys)} loaded')
 PY
 source "$CRED_DIR/openclaw-secrets.env"
+
+if [ -n "${N8N_PUBLIC_URL:-}" ]; then
+    export WEBHOOK_URL="$N8N_PUBLIC_URL"
+    export N8N_EDITOR_BASE_URL="$N8N_PUBLIC_URL"
+    export N8N_PROTOCOL="https"
+    export N8N_HOST="0.0.0.0"
+    export N8N_PORT="5678"
+    ok "Using N8N public URL: $N8N_PUBLIC_URL"
+else
+    warn "N8N_PUBLIC_URL not set — n8n OAuth callbacks will default to localhost"
+fi
 
 # 3. Node 22
 info "--- 3. Node 22 ---"

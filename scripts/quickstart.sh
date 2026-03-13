@@ -149,11 +149,15 @@ print(f'✅ Secrets: {found}/{len(keys)} loaded')
 PY
 source "$CRED_DIR/openclaw-secrets.env"
 
-if [ -z "${N8N_PUBLIC_URL:-}" ] && [ -f "$LOG_VSCODE" ]; then
-    tunnel_url="$(grep -Eo 'https://[^ ]+\.use\.devtunnels\.ms' "$LOG_VSCODE" | head -1 || true)"
-    if [ -n "$tunnel_url" ]; then
-        export N8N_PUBLIC_URL="${tunnel_url/openclaw-kaggle\/kaggle\/working\/.vscode/0vx6wsg3-5678.use.devtunnels.ms}"
-    fi
+if [ -n "${N8N_PUBLIC_URL:-}" ]; then
+    export WEBHOOK_URL="$N8N_PUBLIC_URL"
+    export N8N_EDITOR_BASE_URL="$N8N_PUBLIC_URL"
+    export N8N_PROTOCOL="https"
+    export N8N_HOST="0.0.0.0"
+    export N8N_PORT="5678"
+    ok "Using N8N public URL: $N8N_PUBLIC_URL"
+else
+    warn "N8N_PUBLIC_URL not set — n8n OAuth callbacks will default to localhost"
 fi
 
 # 2. Node
