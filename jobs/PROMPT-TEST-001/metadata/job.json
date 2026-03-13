@@ -2,9 +2,9 @@
   "job_id": "PROMPT-TEST-001",
   "client_name": "PromptTestClient",
   "persona_name": "FitnessInfluencer",
-  "status": "new",
+  "status": "preview_running",
   "created_at": "2026-03-13T22:25:10Z",
-  "updated_at": "2026-03-13T22:25:30Z",
+  "updated_at": "2026-03-13T22:26:54Z",
   "drive": {
     "root_folder_id": "1K--9d2gsNDqfSUA9FpJnn05WbsFpQ9Fe",
     "root_folder_link": "https://drive.google.com/drive/folders/1K--9d2gsNDqfSUA9FpJnn05WbsFpQ9Fe",
