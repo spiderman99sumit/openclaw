@@ -265,6 +265,13 @@ def bootstrap_job_drive(client: FactoryGoogleClient, job_id: str, folder_name: O
     final_folder = drive_data["subfolders"]["final_batches"]
     delivery_folder = drive_data["subfolders"]["delivery"]
     job_record = load_json(Path(local["job_json_path"]), {})
+    drive_section = job_record.setdefault("drive", {})
+    drive_section["root_folder_id"] = drive_data["job_folder"]["id"]
+    drive_section["root_folder_link"] = drive_data["job_folder"]["webViewLink"]
+    subfolder_links = drive_section.setdefault("subfolders", {})
+    for name, info in drive_data["subfolders"].items():
+        subfolder_links[name] = info["id"]
+
     job_record.update(
         {
             "job_id": job_id,
@@ -274,6 +281,7 @@ def bootstrap_job_drive(client: FactoryGoogleClient, job_id: str, folder_name: O
             "preview_folder": preview_folder["webViewLink"],
             "final_folder": final_folder["webViewLink"],
             "delivery_folder": delivery_folder["webViewLink"],
+            "updated_at": now_iso(),
             "last_updated": now_iso(),
         }
     )
