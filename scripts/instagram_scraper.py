@@ -55,52 +55,9 @@ def scrape_profile(
  
  Returns metadata about the scrape.
  """
- try:
-  import instaloader
- except ImportError:
-  print('Installing instaloader...')
-  import subprocess
-  subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'instaloader', '-q'])
-  import instaloader
+ import instaloader
 
- L = instaloader.Instaloader(
-  download_pictures=True,
-  download_videos=False,
-  download_video_thumbnails=False,
-  download_geotags=False,
-  download_comments=False,
-  save_metadata=False,
-  compress_json=False,
-  post_metadata_txt_pattern='',
-  max_connection_attempts=3,
-  request_timeout=30,
-  quiet=False,
- )
-
- # Login if credentials provided (helps avoid rate limits)
- if login_user and login_pass:
-  try:
-   L.login(login_user, login_pass)
-   print(f' Logged in as: {login_user}')
-  except Exception as e:
-   print(f' Login failed: {e}')
-   print(f' Continuing without login (may hit rate limits faster)')
-
- # Load session from Kaggle secrets if available
- if not login_user:
-  try:
-   from kaggle_secrets import UserSecretsClient
-   secrets = UserSecretsClient()
-   ig_user = secrets.get_secret('INSTAGRAM_USER')
-   ig_pass = secrets.get_secret('INSTAGRAM_PASS')
-   if ig_user and ig_pass:
-    try:
-     L.login(ig_user, ig_pass)
-     print(f' Logged in via Kaggle secrets as: {ig_user}')
-    except Exception as e:
-     print(f' Auto-login failed: {e}')
-  except Exception:
-   pass
+ L = build_loader(quiet=False, login_user=login_user, login_pass=login_pass)
 
  print(f'\nScraping @{username} (max {max_posts} posts)...\n')
 
@@ -288,6 +245,85 @@ def scrape_profile(
  })
 
  return scrape_result
+
+
+def build_loader(quiet: bool = False, login_user: str = '', login_pass: str = ''):
+ try:
+  import instaloader
+ except ImportError:
+  import subprocess
+  subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'instaloader', '-q'])
+  import instaloader
+
+ L = instaloader.Instaloader(quiet=quiet)
+
+ # Try to load saved session file
+ session_file = WORKSPACE / '.instagram_session'
+ if session_file.exists() and not login_user:
+  try:
+   L.load_session_from_file(
+    username=L.context.username or 'session_user',
+    filename=str(session_file)
+   )
+   print(f' Loaded saved session from {session_file}')
+  except Exception:
+   pass
+
+ if login_user and login_pass:
+  try:
+   L.login(login_user, login_pass)
+   print(f' Logged in as: {login_user}')
+   try:
+    session_save = WORKSPACE / '.instagram_session'
+    L.save_session_to_file(filename=str(session_save))
+   except Exception:
+    pass
+   return L
+  except Exception as e:
+   print(f' Login failed: {e}')
+   print(f' Continuing without login (may hit rate limits faster)')
+
+ if not login_user:
+  session_loaded = False
+  try:
+   from kaggle_secrets import UserSecretsClient
+   secrets = UserSecretsClient()
+   try:
+    session_id = secrets.get_secret('INSTAGRAM_SESSION_ID')
+    if session_id:
+     ig_user = secrets.get_secret('INSTAGRAM_USER')
+     L.context._session.cookies.set('sessionid', session_id, domain='.instagram.com', path='/')
+     if '%3A' in session_id:
+      user_id = session_id.split('%3A')[0]
+      L.context._session.cookies.set('ds_user_id', user_id, domain='.instagram.com', path='/')
+     L.context.username = ig_user or 'session_user'
+     print(' Loaded Instagram session cookie')
+     session_loaded = True
+   except Exception as e:
+    print(f' Session cookie method failed: {e}')
+
+   if not session_loaded:
+    try:
+     ig_user = secrets.get_secret('INSTAGRAM_USER')
+     ig_pass = secrets.get_secret('INSTAGRAM_PASS')
+     if ig_user and ig_pass:
+      L.login(ig_user, ig_pass)
+      print(f' Logged in via Kaggle secrets as: {ig_user}')
+      session_loaded = True
+      try:
+       session_save = WORKSPACE / '.instagram_session'
+       L.save_session_to_file(filename=str(session_save))
+      except Exception:
+       pass
+    except Exception as e:
+     print(f' Password login failed: {e}')
+  except Exception:
+   pass
+
+  if not session_loaded:
+   print(' WARNING: No Instagram session. Scraping without login (may fail).')
+
+ return L
 
 
 def scrape_for_job(
