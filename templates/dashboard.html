@@ -222,47 +222,47 @@ function showPage(page) {
 
 function jobCard(job) {
  try {
- var s = job.status || 'new';
- var id = job.job_id || 'unknown';
- var drive = job.drive || {};
- var preview = drive.preview || job.preview || {};
- var finalBatch = drive.final_batch || job.final_batch || {};
+ const s = job.status || 'new';
+ const id = job.job_id || 'unknown';
+ const drive = job.drive || {};
+ const preview = drive.preview || job.preview || {};
+ const finalBatch = drive.final_batch || job.final_batch || {};
  
- var previewDriveLinks = preview.drive_links || [];
- var finalDriveLinks = finalBatch.drive_links || [];
+ const previewDriveLinks = preview.drive_links || [];
+ const finalDriveLinks = finalBatch.drive_links || [];
 
- var previewLinks = previewDriveLinks.map(function(l, i) {
+ const previewLinks = previewDriveLinks.map(function(l, i) {
  return '<a href="' + l + '" target="_blank" class="drive-link">🖼 Preview ' + (i+1) + '</a>';
  }).join(' ');
 
- var finalLinks = finalDriveLinks.map(function(l, i) {
+ const finalLinks = finalDriveLinks.map(function(l, i) {
  return '<a href="' + l + '" target="_blank" class="drive-link">🎯 Final ' + (i+1) + '</a>';
  }).join(' ');
 
- var actions = "<button class=\"btn btn-ghost btn-sm\" onclick=\"showDetail('" + id + ")\">📋 Details</button>";
+ let actions = '<button class="btn btn-ghost btn-sm" onclick="showDetail(\'' + id + '\')">📋 Details</button>';
 
- var rootLink = drive.root_folder_link || job.drive_job_folder || '';
+ const rootLink = drive.root_folder_link || job.drive_job_folder || '';
  if (rootLink) {
  actions += '<a href="' + rootLink + '" target="_blank" class="btn btn-ghost btn-sm">📁 Drive</a>';
  }
  if (job._has_prompts) {
- actions += "<button class=\"btn btn-ghost btn-sm\" onclick=\"showPrompts('" + id + ")\">📝 Prompts</button>";
+ actions += '<button class="btn btn-ghost btn-sm" onclick="showPrompts(\'' + id + '\')">📝 Prompts</button>';
  }
  if (s === 'new' && job._has_prompts) {
- actions += "<button class=\"btn btn-primary btn-sm\" onclick=\"generatePreviews('" + id + ")\">🎨 Generate Previews</button>";
+ actions += '<button class="btn btn-primary btn-sm" onclick="generatePreviews(\'' + id + '\')">🎨 Generate Previews</button>';
  }
  if (s === 'preview_review') {
- actions += "<button class=\"btn btn-success btn-sm\" onclick=\"approveJob('" + id + ")\">✅ Approve</button>";
- actions += "<button class=\"btn btn-danger btn-sm\" onclick=\"rejectJob('" + id + ")\">✗ Reject</button>";
+ actions += '<button class="btn btn-success btn-sm" onclick="approveJob(\'' + id + '\')">✅ Approve</button>';
+ actions += '<button class="btn btn-danger btn-sm" onclick="rejectJob(\'' + id + '\')">✗ Reject</button>';
  }
  if (s === 'approved_for_training' || s === 'training_done') {
- actions += "<button class=\"btn btn-warning btn-sm\" onclick=\"generateFinals('" + id + ")\">🎯 Generate Finals</button>";
+ actions += '<button class="btn btn-warning btn-sm" onclick="generateFinals(\'' + id + '\')">🎯 Generate Finals</button>';
  }
  if (s === 'qa_review' || s === 'delivery_ready') {
- actions += "<button class=\"btn btn-success btn-sm\" onclick=\"deliverJob('" + id + ")\">📦 Deliver</button>";
+ actions += '<button class="btn btn-success btn-sm" onclick="deliverJob(\'' + id + '\')">📦 Deliver</button>';
  }
 
- var linksHtml = '';
+ let linksHtml = '';
  if (previewLinks || finalLinks) {
  linksHtml = '<div class="job-card-links">' + previewLinks + ' ' + finalLinks + '</div>';
  }
@@ -527,8 +527,7 @@ async function showPrompts(id) {
 
 async function savePrompts() {
  var ed = document.getElementById('prompts-editor');
- var prompts = ed.value.split('
-').filter(function(l) { return l.trim(); });
+ var prompts = ed.value.split('\n').filter(function(l) { return l.trim(); });
  await api('/api/update-prompts/' + ed.dataset.jobId, 'POST', {prompts: prompts});
  closeModal('prompts-modal');
  loadJobs();
@@ -623,6 +622,7 @@ initDashboard();
 setInterval(loadJobs, 30000);
 setInterval(loadHealth, 60000);
 setInterval(function() { loadLoras(); loadApiStatus(); }, 120000);
+
 </script>
 </body>
 </html>
