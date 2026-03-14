@@ -188,13 +188,104 @@ let currentPage = 'dashboard';
 async function api(path, method='GET', body=null) { const opts = { method, headers: {'Content-Type':'application/json'} }; if (body) opts.body = JSON.stringify(body); const r = await fetch(path, opts); return r.json(); }
 function statusLabel(s) { const m = { 'new':'New', 'preview_running':'Generating', 'preview_review':'Review', 'approved_for_training':'Approved', 'training_running':'Training', 'training_done':'Trained', 'final_generation_running':'Generating Finals', 'qa_review':'QA Review', 'delivery_ready':'Ready', 'delivered':'Delivered', 'failed':'Failed', 'training_failed':'Failed' }; return m[s] || s; }
 function showPage(page) { currentPage = page; document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active')); document.getElementById('page-' + page).classList.add('active'); document.getElementById('nav-' + page).classList.add('active'); const titles = { dashboard: ['Dashboard', 'Overview of your AI influencer factory'], orders: ['Orders', 'Manage all client orders'], loras: ['LoRA Models', 'Trained models and checkpoints'], api: ['API & Deployment', 'Modal endpoint and system settings'], }; document.getElementById('page-title').textContent = titles[page]?.[0] || page; document.getElementById('page-subtitle').textContent = titles[page]?.[1] || ''; // Don't re-fetch on tab click — data is already loaded }
-function jobCard(job) { const s = job.status || 'new'; const id = job.job_id; const previewLinks = (job.drive?.preview?.drive_links || []).map((l,i) => `<a href="${l}" target="_blank" class="drive-link">🖼 Preview ${i+1}</a>`).join(' '); const finalLinks = (job.drive?.final_batch?.drive_links || []).map((l,i) => `<a href="${l}" target="_blank" class="drive-link">🎯 Final ${i+1}</a>`).join(' '); let actions = `<button class="btn btn-ghost btn-sm" onclick="showDetail('${id}')">📋 Details</button>`; if (job.drive?.root_folder_link) actions += `<a href="${job.drive.root_folder_link}" target="_blank" class="btn btn-ghost btn-sm">📁 Drive</a>`; if (job._has_prompts) actions += `<button class="btn btn-ghost btn-sm" onclick="showPrompts('${id}')">📝 Prompts</button>`; if (s === 'new' && job._has_prompts) actions += `<button class="btn btn-primary btn-sm" onclick="generatePreviews('${id}')">🎨 Generate Previews</button>`; if (s === 'preview_review') { actions += `<button class="btn btn-success btn-sm" onclick="approveJob('${id}')">✅ Approve</button>`; actions += `<button class="btn btn-danger btn-sm" onclick="rejectJob('${id}')">✗ Reject</button>`; } if (s === 'approved_for_training' || s === 'training_done') actions += `<button class="btn btn-warning btn-sm" onclick="generateFinals('${id}')">🎯 Generate Finals</button>`; if (s === 'qa_review' || s === 'delivery_ready') actions += `<button class="btn btn-success btn-sm" onclick="deliverJob('${id}')">📦 Deliver</button>`; return `<div class="job-card status-${s}"><div class="job-card-header"><div class="job-card-title"><span class="job-card-id">${id}</span><span class="job-card-client">${job.client_name || ''} / ${job.persona_name || ''}</span></div><span class="badge badge-${s}">${statusLabel(s)}</span></div><div class="job-card-meta"><div class="meta-chip">🖼 Previews: <span>${job._preview_count || 0}</span></div><div class="meta-chip">🎯 Finals: <span>${job._final_count || 0}</span></div><div class="meta-chip">📝 Prompts: <span>${job._has_prompts ? '✅' : '—'}</span></div><div class="meta-chip">🕒 <span>${(job.updated_at||'').replace('T',' ').replace('Z','')}</span></div></div><div class="job-card-actions">${actions}</div>${previewLinks || finalLinks ? `<div class="job-card-links">${previewLinks} ${finalLinks}</div>` : ''}</div>`; }
-function renderJobs(jobs) { allJobs = jobs; const total = jobs.length; const active = jobs.filter(j => !['delivered','failed'].includes(j.status)).length; const delivered = jobs.filter(j => j.status === 'delivered').length; const review = jobs.filter(j => j.status === 'preview_review').length; document.getElementById('orders-badge').textContent = active; document.getElementById('stats-row').innerHTML = `<div class="stat-card"><div class="stat-icon">📦</div><div class="stat-value">${total}</div><div class="stat-label">Total Orders</div></div><div class="stat-card"><div class="stat-icon">⚡</div><div class="stat-value">${active}</div><div class="stat-label">Active</div></div><div class="stat-card"><div class="stat-icon">👁</div><div class="stat-value">${review}</div><div class="stat-label">Awaiting Review</div></div><div class="stat-card"><div class="stat-icon">✅</div><div class="stat-value">${delivered}</div><div class="stat-label">Delivered</div></div>`; jobs.sort((a,b) => { if (a.status==='delivered' && b.status!=='delivered') return 1; if (a.status!=='delivered' && b.status==='delivered') return -1; return (b.updated_at||'').localeCompare(a.updated_at||''); }); document.getElementById('recent-jobs').innerHTML = jobs.length ? jobs.slice(0,5).map(jobCard).join('') : '<div class="empty-state"><div class="empty-icon">📦</div><h2>No orders yet</h2><p>Click "+ New Order" to create your first job</p></div>'; document.getElementById('all-jobs').innerHTML = jobs.length ? jobs.map(jobCard).join('') : '<div class="empty-state"><div class="empty-icon">📦</div><h2>No orders</h2><p>Create a new order to get started</p></div>'; }
+function jobCard(job) {
+ try {
+  const s = job.status || 'new';
+  const id = job.job_id || 'unknown';
+  const drive = job.drive || {};
+  const preview = drive.preview || {};
+  const finalBatch = drive.final_batch || {};
+ 
+  const previewLinks = (preview.drive_links || [])
+  .map((l,i) => `<a href="${l}" target="_blank" class="drive-link">🖼 Preview ${i+1}</a>`).join(' ');
+  const finalLinks = (finalBatch.drive_links || [])
+  .map((l,i) => `<a href="${l}" target="_blank" class="drive-link">🎯 Final ${i+1}</a>`).join(' ');
+ 
+  let actions = `<button class="btn btn-ghost btn-sm" onclick="showDetail('${id}')">📋 Details</button>`;
+ 
+  if (drive.root_folder_link)
+  actions += `<a href="${drive.root_folder_link}" target="_blank" class="btn btn-ghost btn-sm">📁 Drive</a>`;
+  if (job._has_prompts)
+  actions += `<button class="btn btn-ghost btn-sm" onclick="showPrompts('${id}')">📝 Prompts</button>`;
+  if (s === 'new' && job._has_prompts)
+  actions += `<button class="btn btn-primary btn-sm" onclick="generatePreviews('${id}')">🎨 Generate Previews</button>`;
+  if (s === 'preview_review') {
+  actions += `<button class="btn btn-success btn-sm" onclick="approveJob('${id}')">✅ Approve</button>`;
+  actions += `<button class="btn btn-danger btn-sm" onclick="rejectJob('${id}')">✗ Reject</button>`;
+  }
+  if (s === 'approved_for_training' || s === 'training_done')
+  actions += `<button class="btn btn-warning btn-sm" onclick="generateFinals('${id}')">🎯 Generate Finals</button>`;
+  if (s === 'qa_review' || s === 'delivery_ready')
+  actions += `<button class="btn btn-success btn-sm" onclick="deliverJob('${id}')">📦 Deliver</button>`;
+
+  return `<div class="job-card status-${s}">
+  <div class="job-card-header">
+  <div class="job-card-title">
+  <span class="job-card-id">${id}</span>
+  <span class="job-card-client">${job.client_name || ''} / ${job.persona_name || ''}</span>
+  </div>
+  <span class="badge badge-${s}">${statusLabel(s)}</span>
+  </div>
+  <div class="job-card-meta">
+  <div class="meta-chip">🖼 Previews: <span>${job._preview_count || 0}</span></div>
+  <div class="meta-chip">🎯 Finals: <span>${job._final_count || 0}</span></div>
+  <div class="meta-chip">📝 Prompts: <span>${job._has_prompts ? '✅' : '—'}</span></div>
+  <div class="meta-chip">🕒 <span>${(job.updated_at||'').replace('T',' ').replace('Z','')}</span></div>
+  </div>
+  <div class="job-card-actions">${actions}</div>
+  ${previewLinks || finalLinks ? `<div class="job-card-links">${previewLinks} ${finalLinks}</div>` : ''}
+  </div>`;
+ } catch(e) {
+  console.error('Error rendering job card:', job.job_id, e);
+  return `<div class="job-card status-failed">
+  <div class="job-card-header">
+  <span class="job-card-id">${job.job_id || 'unknown'}</span>
+  <span class="badge badge-failed">Render Error</span>
+  </div>
+  <div style="color:var(--danger);font-size:13px;margin-top:8px;">${e.message}</div>
+  </div>`;
+ }
+}
+function renderJobs(jobs) {
+ allJobs = jobs || [];
+ const total = allJobs.length;
+ const active = allJobs.filter(j => !['delivered','failed'].includes(j.status)).length;
+ const delivered = allJobs.filter(j => j.status === 'delivered').length;
+ const review = allJobs.filter(j => j.status === 'preview_review').length;
+
+ document.getElementById('orders-badge').textContent = active;
+ document.getElementById('stats-row').innerHTML = `
+ <div class="stat-card"><div class="stat-icon">📦</div><div class="stat-value">${total}</div><div class="stat-label">Total Orders</div></div>
+ <div class="stat-card"><div class="stat-icon">⚡</div><div class="stat-value">${active}</div><div class="stat-label">Active</div></div>
+ <div class="stat-card"><div class="stat-icon">👁</div><div class="stat-value">${review}</div><div class="stat-label">Awaiting Review</div></div>
+ <div class="stat-card"><div class="stat-icon">✅</div><div class="stat-value">${delivered}</div><div class="stat-label">Delivered</div></div>`;
+
+ allJobs.sort((a,b) => {
+ if (a.status==='delivered' && b.status!=='delivered') return 1;
+ if (a.status!=='delivered' && b.status==='delivered') return -1;
+ return (b.updated_at||'').localeCompare(a.updated_at||'');
+ });
+
+ const recentHtml = allJobs.length
+ ? allJobs.slice(0,5).map(j => jobCard(j)).join('')
+ : '<div class="empty-state"><div class="empty-icon">📦</div><h2>No orders yet</h2><p>Click "+ New Order" to create your first job</p></div>';
+ 
+ const allHtml = allJobs.length
+ ? allJobs.map(j => jobCard(j)).join('')
+ : '<div class="empty-state"><div class="empty-icon">📦</div><h2>No orders</h2><p>Create a new order to get started</p></div>';
+
+ document.getElementById('recent-jobs').innerHTML = recentHtml;
+ document.getElementById('all-jobs').innerHTML = allHtml;
+}
 async function loadJobs() {
  try {
-  renderJobs(await api('/api/jobs'));
+  const jobs = await api('/api/jobs');
+  console.log('Loaded jobs:', jobs.length, jobs);
+  renderJobs(jobs);
  } catch(e) {
   console.error('Failed to load jobs:', e);
+  document.getElementById('recent-jobs').innerHTML = 
+  '<div style="color:var(--danger);padding:20px;">Failed to load jobs. Check console.</div>';
  }
 }
 let loraCache = null;
