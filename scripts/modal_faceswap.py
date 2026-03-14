@@ -70,9 +70,14 @@ image = (
         f"git clone https://github.com/BadCafeCode/masquerade-nodes-comfyui {COMFYUI_PATH}/custom_nodes/masquerade-nodes-comfyui",
         f"git clone https://github.com/Ryuukeisyou/comfyui_face_parsing {COMFYUI_PATH}/custom_nodes/comfyui_face_parsing",
         f"cd {COMFYUI_PATH}/custom_nodes/comfyui_face_parsing && pip install -r requirements.txt || true",
-        f"git clone https://github.com/aining2022/ComfyUI_Swwan {COMFYUI_PATH}/custom_nodes/ComfyUI_Swwan",
-        f"cd {COMFYUI_PATH}/custom_nodes/ComfyUI_Swwan && pip install -r requirements.txt || true",
-        f"git clone https://github.com/boilerdomi/ComfyUI-load-lora-from-url {COMFYUI_PATH}/custom_nodes/ComfyUI-load-lora-from-url",
+                # ComfyUI_Swwan (provides ImageResize+, ImageConcanate, etc)
+        f"git clone https://github.com/aining2022/ComfyUI_Swwan {COMFYUI_PATH}/custom_nodes/ComfyUI_Swwan && "
+        f"cd {COMFYUI_PATH}/custom_nodes/ComfyUI_Swwan && pip install -r requirements.txt || true && "
+        f"echo 'Swwan installed:' && ls {COMFYUI_PATH}/custom_nodes/ComfyUI_Swwan/*.py 2>/dev/null | head -20",
+        # Backup: efficiency-nodes also provides ImageResize+
+        f"git clone https://github.com/jags111/efficiency-nodes-comfyui {COMFYUI_PATH}/custom_nodes/efficiency-nodes-comfyui || true",
+        f"cd {COMFYUI_PATH}/custom_nodes/efficiency-nodes-comfyui && pip install -r requirements.txt 2>/dev/null || true",
+        f"git clone https://github.com/a-und-b/ComfyUI_LoRA_from_URL {COMFYUI_PATH}/custom_nodes/ComfyUI_LoRA_from_URL",
     )
     .run_commands("pip install 'setuptools<82'")
     .env({
