@@ -239,27 +239,27 @@ function jobCard(job) {
  return '<a href="' + l + '" target="_blank" class="drive-link">🎯 Final ' + (i+1) + '</a>';
  }).join(' ');
 
- var actions = '<button class="btn btn-ghost btn-sm" onclick="showDetail(\\' + id + \\')">📋 Details</button>';
+ var actions = "<button class=\"btn btn-ghost btn-sm\" onclick=\"showDetail('" + id + ")\">📋 Details</button>";
 
  var rootLink = drive.root_folder_link || job.drive_job_folder || '';
  if (rootLink) {
  actions += '<a href="' + rootLink + '" target="_blank" class="btn btn-ghost btn-sm">📁 Drive</a>';
  }
  if (job._has_prompts) {
- actions += '<button class="btn btn-ghost btn-sm" onclick="showPrompts(\\' + id + \\')">📝 Prompts</button>';
+ actions += "<button class=\"btn btn-ghost btn-sm\" onclick=\"showPrompts('" + id + ")\">📝 Prompts</button>";
  }
  if (s === 'new' && job._has_prompts) {
- actions += '<button class="btn btn-primary btn-sm" onclick="generatePreviews(\\' + id + \\')">🎨 Generate Previews</button>';
+ actions += "<button class=\"btn btn-primary btn-sm\" onclick=\"generatePreviews('" + id + ")\">🎨 Generate Previews</button>";
  }
  if (s === 'preview_review') {
- actions += '<button class="btn btn-success btn-sm" onclick="approveJob(\\' + id + \\')">✅ Approve</button>';
- actions += '<button class="btn btn-danger btn-sm" onclick="rejectJob(\\' + id + \\')">✗ Reject</button>';
+ actions += "<button class=\"btn btn-success btn-sm\" onclick=\"approveJob('" + id + ")\">✅ Approve</button>";
+ actions += "<button class=\"btn btn-danger btn-sm\" onclick=\"rejectJob('" + id + ")\">✗ Reject</button>";
  }
  if (s === 'approved_for_training' || s === 'training_done') {
- actions += '<button class="btn btn-warning btn-sm" onclick="generateFinals(\\' + id + \\')">🎯 Generate Finals</button>';
+ actions += "<button class=\"btn btn-warning btn-sm\" onclick=\"generateFinals('" + id + ")\">🎯 Generate Finals</button>";
  }
  if (s === 'qa_review' || s === 'delivery_ready') {
- actions += '<button class="btn btn-success btn-sm" onclick="deliverJob(\\' + id + \\')">📦 Deliver</button>';
+ actions += "<button class=\"btn btn-success btn-sm\" onclick=\"deliverJob('" + id + ")\">📦 Deliver</button>";
  }
 
  var linksHtml = '';
