@@ -344,11 +344,19 @@ async function pollTask(id) { try { const s = await api(`/api/tasks/${id}`); if 
 function showToast(id,title,type,msg) { const c = document.getElementById('toast-container'); const t = document.createElement('div'); t.id='toast-'+id; t.className='toast toast-'+type; t.innerHTML=`<div class="toast-title">${title}</div><div class="toast-msg">${msg}</div>`; c.appendChild(t); }
 function updateToast(id,type,msg) { const t=document.getElementById('toast-'+id); if(t){t.className='toast toast-'+type;t.querySelector('.toast-msg').textContent=msg;} }
 function removeToast(id){const t=document.getElementById('toast-'+id);if(t)t.remove();}
-// Init — load jobs first (fast), then health (slow)
-loadJobs();
-setTimeout(loadHealth, 1000);
+// Init — load everything once at startup
+async function initDashboard() {
+ await loadJobs();
+ // Load these in background, don't block
+ loadHealth();
+ loadLoras();
+ loadApiStatus();
+}
+
+initDashboard();
 setInterval(loadJobs, 30000);
 setInterval(loadHealth, 60000);
+setInterval(() => { loadLoras(); loadApiStatus(); }, 120000);
 </script>
 </body>
 </html>
