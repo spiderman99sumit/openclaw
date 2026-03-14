@@ -432,14 +432,9 @@ def main() -> int:
   return 0
 
  elif args.cmd == 'info':
-  try:
-   import instaloader
-  except ImportError:
-   import subprocess
-   subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'instaloader', '-q'])
-   import instaloader
+  import instaloader
 
-  L = instaloader.Instaloader(quiet=True)
+  L = build_loader(quiet=True)
   profile = instaloader.Profile.from_username(L.context, args.username)
 
   info = {
