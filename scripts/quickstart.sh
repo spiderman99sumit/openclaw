@@ -263,12 +263,9 @@ fi
 
 # 3. OpenClaw
 info "--- 3. OpenClaw ---"
-if command -v openclaw &>/dev/null; then
-    ok "OpenClaw already installed ($(openclaw --version 2>/dev/null | head -1 || echo unknown))"
-else
-    npm install -g openclaw@2026.3.11 > /dev/null 2>&1
-    ok "OpenClaw installed"
-fi
+info "Updating OpenClaw to latest npm release"
+npm install -g openclaw@latest > /dev/null 2>&1
+ok "OpenClaw ready ($(openclaw --version 2>/dev/null | head -1 || echo unknown))"
 
 # 4. n8n
 info "--- 4. n8n ---"
