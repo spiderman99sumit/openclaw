@@ -380,6 +380,59 @@ snapshot_root_openclaw
 ok "Config/auth/device state backed up to persistent storage"
 ok "Compact /root/.openclaw snapshot saved to $ROOT_BACKUP_DIR"
 
+# 15a. Factory State Restore
+info "--- 15a. Factory State Restore ---"
+FACTORY_DIR="$WORKSPACE_DIR"
+if [ -f "$FACTORY_DIR/scripts/factory_restore.sh" ]; then
+ bash "$FACTORY_DIR/scripts/factory_restore.sh" 2>/dev/null && ok "Factory state restored" || warn "Factory restore had issues (may be first run)"
+else
+ warn "No factory restore script found (first run or not yet built)"
+fi
+
+# 15b. Factory Dashboard
+info "--- 15b. Factory Dashboard ---"
+pkill -f factory_dashboard 2>/dev/null || true
+sleep 1
+if [ -f "$FACTORY_DIR/scripts/factory_dashboard.py" ]; then
+ # Ensure dependencies
+ pip install fastapi uvicorn > /dev/null 2>&1 || true
+ 
+ nohup python3 "$FACTORY_DIR/scripts/factory_dashboard.py" > /kaggle/working/factory_dashboard.log 2>&1 &
+ sleep 3
+ 
+ if curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:7860/ | grep -q "200"; then
+  ok "Factory dashboard running on port 7860"
+ else
+  warn "Factory dashboard may not have started — check /kaggle/working/factory_dashboard.log"
+ fi
+else
+ warn "Factory dashboard not found at $FACTORY_DIR/scripts/factory_dashboard.py"
+fi
+
+# 15c. Factory Health
+info "--- 15c. Factory Health ---"
+if [ -f "$FACTORY_DIR/scripts/job_manager.py" ]; then
+ JOB_COUNT=$(python3 "$FACTORY_DIR/scripts/job_manager.py" list 2>/dev/null | python3 -c "import sys,json; print(len(json.load(sys.stdin)))" 2>/dev/null || echo "0")
+ ok "Factory: $JOB_COUNT jobs tracked"
+ 
+ # Quick health check
+ N8N_OK="❌"
+ WEBHOOK_OK="❌"
+ DASHBOARD_OK="❌"
+ 
+ curl -s -o /dev/null http://127.0.0.1:5678/healthz 2>/dev/null && N8N_OK="✅"
+ curl -s -o /dev/null -X POST -H "Content-Type: application/json" \
+ -d '{"job_id":"boot","folder_id":"","files":[]}' \
+ http://127.0.0.1:5678/webhook/factory-preview-upload-v2 2>/dev/null && WEBHOOK_OK="✅"
+ curl -s -o /dev/null http://127.0.0.1:7860/ 2>/dev/null && DASHBOARD_OK="✅"
+ 
+ info " n8n: $N8N_OK"
+ info " Webhook: $WEBHOOK_OK"
+ info " Dashboard: $DASHBOARD_OK"
+else
+ warn "Factory scripts not found"
+fi
+
 # 15. Gateway (start last; don't kill the whole script on health-check noise)
 info "--- 15. Gateway ---"
 rm -f "$LOG_GATEWAY"
@@ -425,9 +478,21 @@ openclaw channels status || warn "Channel status reported warnings"
 
 info ""
 info "============================================="
-info "  ✅ STARTUP COMPLETE"
+info " ✅ STARTUP COMPLETE"
 info "============================================="
-info "Persistent runtime dir: $PERSIST_RUNTIME_DIR"
-info "Persistent n8n dir: $PERSIST_N8N_DIR"
-info "If gateway is noisy, n8n should still be up on port 5678"
-info "If Discord is briefly disconnected, wait ~10-20s and recheck: openclaw channels status"
+info ""
+info "Services:"
+info " OpenClaw Gateway: port 18789"
+info " n8n: port 5678"
+info " Factory Dashboard: port 7860"
+info ""
+info "Dashboard URL: http://localhost:7860"
+info " (or via VS Code tunnel port forward)"
+info ""
+info "Persistent dirs:"
+info " Runtime: $PERSIST_RUNTIME_DIR"
+info " n8n: $PERSIST_N8N_DIR"
+info " Factory: $WORKSPACE_DIR"
+info ""
+info "If Discord briefly disconnects, wait ~10-20s and recheck:"
+info " openclaw channels status"
