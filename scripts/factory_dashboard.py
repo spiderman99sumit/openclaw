@@ -162,7 +162,7 @@ def get_modal_status() -> Dict[str, Any]:
   import urllib.request
   req = urllib.request.Request(status['endpoint'], method='POST')
   req.add_header('Content-Type', 'application/x-www-form-urlencoded')
-  with urllib.request.urlopen(req, timeout=10) as resp:
+  with urllib.request.urlopen(req, timeout=3) as resp:
    status['endpoint_alive'] = resp.status == 200
  except Exception as e:
   status['endpoint_error'] = str(e)[:200]
@@ -282,12 +282,12 @@ async def api_list_loras():
 
 @app.get('/api/modal/status')
 async def api_modal_status():
- import time
+ import time as _time
  global _modal_cache, _modal_cache_time
- if time.time() - _modal_cache_time < MODAL_CACHE_TTL and _modal_cache:
+ if _time.time() - _modal_cache_time < MODAL_CACHE_TTL and _modal_cache:
   return _modal_cache
  _modal_cache = get_modal_status()
- _modal_cache_time = time.time()
+ _modal_cache_time = _time.time()
  return _modal_cache
 
 @app.get('/api/health')
