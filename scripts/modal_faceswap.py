@@ -789,18 +789,20 @@ def download_models_to_volume():
     ],
 )
 @modal.fastapi_endpoint(method="POST", docs=True)
-def swap(
-    face_image: str = "",
-    body_image: str = "",
-    seed: int = -1,
-):
+async def swap(request: dict):
     """
     Face swap endpoint.
-    Accepts base64-encoded face and body images.
-    Returns the face-swapped result as JPEG.
+    Accepts JSON body with base64-encoded face and body images.
+    Returns the face-swapped result as PNG.
+
+    Body: {"face_image": "<base64>", "body_image": "<base64>", "seed": 42}
     """
     import random
     from fastapi.responses import JSONResponse, Response
+
+    face_image = request.get("face_image", "")
+    body_image = request.get("body_image", "")
+    seed = request.get("seed", -1)
 
     if not face_image or not body_image:
         return JSONResponse(
