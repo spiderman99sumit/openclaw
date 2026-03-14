@@ -14,6 +14,7 @@ LOG_N8N="/kaggle/working/n8n.log"
 LOG_VSCODE="/kaggle/working/vscode_tunnel.log"
 LOG_AUTOPUSH="/kaggle/working/autopush.log"
 LOG_NGROK="/kaggle/working/ngrok.log"
+LOG_DASHBOARD="/kaggle/working/factory_dashboard.log"
 
 warn() { echo "⚠️ $*"; }
 info() { echo "$*"; }
@@ -391,19 +392,20 @@ fi
 
 # 15b. Factory Dashboard
 info "--- 15b. Factory Dashboard ---"
-pkill -f factory_dashboard 2>/dev/null || true
+pkill -f factory_dashboard.py 2>/dev/null || true
 sleep 1
 if [ -f "$FACTORY_DIR/scripts/factory_dashboard.py" ]; then
  # Ensure dependencies
  pip install fastapi uvicorn > /dev/null 2>&1 || true
  
- nohup python3 "$FACTORY_DIR/scripts/factory_dashboard.py" > /kaggle/working/factory_dashboard.log 2>&1 &
+ rm -f "$LOG_DASHBOARD"
+ nohup python3 "$FACTORY_DIR/scripts/factory_dashboard.py" > "$LOG_DASHBOARD" 2>&1 &
  sleep 3
  
  if curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:7860/ | grep -q "200"; then
   ok "Factory dashboard running on port 7860"
  else
-  warn "Factory dashboard may not have started — check /kaggle/working/factory_dashboard.log"
+  warn "Factory dashboard may not have started — check $LOG_DASHBOARD"
  fi
 else
  warn "Factory dashboard not found at $FACTORY_DIR/scripts/factory_dashboard.py"
