@@ -16,8 +16,12 @@
     "size": 163
   },
   {
-    "path": "agents/main/sessions/31371d56-cc51-4e67-b023-b60b73a2cb8d.jsonl",
-    "size": 2974432
+    "path": "agents/main/sessions/31371d56-cc51-4e67-b023-b60b73a2cb8d.jsonl.reset.2026-03-14T09-19-56.702Z",
+    "size": 3022519
+  },
+  {
+    "path": "agents/main/sessions/90a3c20f-4bf5-424e-b0a0-93f63f82fb5a.jsonl",
+    "size": 268962
   },
   {
     "path": "agents/main/sessions/d13831cf-3e85-491f-9f3c-2692b3df7467.jsonl.reset.2026-03-13T06-36-12.829Z",
@@ -25,7 +29,7 @@
   },
   {
     "path": "agents/main/sessions/sessions.json",
-    "size": 18687
+    "size": 18770
   },
   {
     "path": "agents/manager/agent/auth-profiles.json",
