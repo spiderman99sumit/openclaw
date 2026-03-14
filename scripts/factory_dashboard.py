@@ -419,6 +419,32 @@ async def api_modal_update_endpoint(request: Request):
   return {'success': True, 'endpoint': new_url}
  return JSONResponse({'error': 'No endpoint provided'}, status_code=400)
 
+@app.post('/api/scrape-instagram/{job_id}')
+async def api_scrape_instagram(job_id: str, request: Request):
+ body = await request.json()
+ username = body.get('username', '').strip().replace('@', '')
+ max_posts = int(body.get('max_posts', 100))
+ sort_by = body.get('sort', 'likes')
+ min_likes = int(body.get('min_likes', 0))
+
+ if not username:
+  return JSONResponse({'error': 'Username required'}, status_code=400)
+
+ steps = [
+  {
+   'name': f'Scraping @{username} ({max_posts} posts)',
+   'cmd': [sys.executable, str(SCRIPTS / 'instagram_scraper.py'),
+   'for-job', '--job-id', job_id,
+   '--username', username,
+   '--max-posts', str(max_posts),
+   '--sort', sort_by,
+   '--min-likes', str(min_likes)],
+  },
+ ]
+
+ task_id = start_background_task(f'Scrape @{username} for {job_id}', steps)
+ return {'task_id': task_id, 'job_id': job_id}
+
 @app.post('/api/backup')
 async def api_backup():
  result = run_script(['bash', str(SCRIPTS / 'factory_backup.sh')])
