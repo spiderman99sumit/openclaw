@@ -520,8 +520,7 @@ async function deliverJob(id) {
 async function showPrompts(id) {
  var job = await api('/api/jobs/' + id);
  document.getElementById('prompts-job-id').textContent = id;
- document.getElementById('prompts-editor').value = (job._prompts || []).join('
-');
+ document.getElementById('prompts-editor').value = (job._prompts || []).join('\n');
  document.getElementById('prompts-editor').dataset.jobId = id;
  document.getElementById('prompts-modal').classList.add('active');
 }
