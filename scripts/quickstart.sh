@@ -338,6 +338,7 @@ pkill -f "openclaw gateway" 2>/dev/null || true
 pkill -f "n8n" 2>/dev/null || true
 pkill -f "code tunnel" 2>/dev/null || true
 pkill -f "scripts/autopush.sh" 2>/dev/null || true
+pkill -f "scripts/factory_dashboard.py" 2>/dev/null || true
 sleep 2
 ok "Old processes cleaned"
 
@@ -381,8 +382,30 @@ snapshot_root_openclaw
 ok "Config/auth/device state backed up to persistent storage"
 ok "Compact /root/.openclaw snapshot saved to $ROOT_BACKUP_DIR"
 
-# 15. Gateway (start last; don't kill the whole script on health-check noise)
-info "--- 15. Gateway ---"
+# 15. Factory dashboard
+info "--- 15. Factory Dashboard ---"
+rm -f "$LOG_DASHBOARD"
+nohup python3 "$WORKSPACE_DIR/scripts/factory_dashboard.py" > "$LOG_DASHBOARD" 2>&1 &
+
+DASHBOARD_OK=0
+for attempt in 1 2 3 4 5 6; do
+    sleep 2
+    if ss -ltn | grep -q ':7860'; then
+        DASHBOARD_OK=1
+        break
+    fi
+    info "Dashboard warmup attempt $attempt/6..."
+done
+
+if [ "$DASHBOARD_OK" = "1" ]; then
+    ok "Factory dashboard running on port 7860"
+else
+    warn "Factory dashboard did not become reachable"
+    tail -80 "$LOG_DASHBOARD" || true
+fi
+
+# 16. Gateway (start last; don't kill the whole script on health-check noise)
+info "--- 16. Gateway ---"
 rm -f "$LOG_GATEWAY"
 nohup openclaw gateway --port 18789 > "$LOG_GATEWAY" 2>&1 &
 
@@ -412,7 +435,7 @@ else
     cat /tmp/openclaw_health.out 2>/dev/null || true
 fi
 
-# 16. Verify
+# 17. Verify
 info ""
 info "============================================="
 info "  VERIFICATION"
@@ -430,5 +453,6 @@ info "  ✅ STARTUP COMPLETE"
 info "============================================="
 info "Persistent runtime dir: $PERSIST_RUNTIME_DIR"
 info "Persistent n8n dir: $PERSIST_N8N_DIR"
+info "Factory dashboard: http://localhost:7860"
 info "If gateway is noisy, n8n should still be up on port 5678"
 info "If Discord is briefly disconnected, wait ~10-20s and recheck: openclaw channels status"
