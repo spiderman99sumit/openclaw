@@ -14,6 +14,7 @@ LOG_N8N="/kaggle/working/n8n.log"
 LOG_VSCODE="/kaggle/working/vscode_tunnel.log"
 LOG_AUTOPUSH="/kaggle/working/autopush.log"
 LOG_NGROK="/kaggle/working/ngrok.log"
+LOG_DASHBOARD="/kaggle/working/factory_dashboard.log"
 
 warn() { echo "⚠️ $*"; }
 info() { echo "$*"; }
