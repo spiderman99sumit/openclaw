@@ -265,7 +265,7 @@ info "--- 3. OpenClaw ---"
 if command -v openclaw &>/dev/null; then
     ok "OpenClaw already installed ($(openclaw --version 2>/dev/null | head -1 || echo unknown))"
 else
-    npm install -g openclaw@2026.3.11 > /dev/null 2>&1
+    npm install -g openclaw@2026.3.13 > /dev/null 2>&1
     ok "OpenClaw installed"
 fi
 

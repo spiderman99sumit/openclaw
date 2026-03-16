@@ -136,7 +136,7 @@ ok "Node $(node -v)"
 
 # 4. OpenClaw
 info "--- 4. OpenClaw ---"
-npm install -g openclaw@2026.3.11 > /dev/null 2>&1
+npm install -g openclaw@2026.3.13 > /dev/null 2>&1
 ok "OpenClaw installed"
 
 # 5. n8n
